@@ -14,11 +14,10 @@ const routes = [
   { path:'/login',component: Login },
   { 
 	path:'/home',component: Home,
-	redirect: '/welcome',
+	redirect: '/home/welcome',
 	children: [
-		{ path: '/welcome', component: Welcome },
+		{ path: '/home/welcome', component: Welcome },
 		{ path: '/home/users', component: Users },
-		{ path: '/home/mytask', component: MyTask },
 		{ path: '/home/carrier', component: carrier },
 		{ path: '/home/unit', component: unit }
 	]

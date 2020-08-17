@@ -16,30 +16,30 @@
         <!-- 侧边栏菜单区域 -->
         <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
           <!-- 一级菜单 -->
-      	<el-menu-item :index="menurouter.welcome">
-			<template slot="title">
-			<i class="el-icon-s-order"></i>
-			<span>首页</span>
-			</template>
-		</el-menu-item>
-		<el-menu-item :index="menurouter.carrier">
-			<template slot="title">
-			<i class="el-icon-s-goods"></i>
-			<span>载体管理</span>
-			</template>
-		</el-menu-item>
-		<el-menu-item :index="menurouter.user">
-			<template slot="title">
-			<i class="el-icon-user-solid"></i>
-			<span>人员管理</span>
-			</template>
-		</el-menu-item>
-		<el-menu-item :index="menurouter.unit">
-			<template slot="title">
-			<i class="el-icon-s-home"></i>
-			<span>单位管理</span>
-			</template>
-		</el-menu-item>
+          	<el-menu-item :index="menurouter.welcome">
+        			<template slot="title">
+        			<i class="el-icon-s-order"></i>
+        			<span>首页</span>
+        			</template>
+        		</el-menu-item>
+        		<el-menu-item :index="menurouter.carrier">
+        			<template slot="title">
+        			<i class="el-icon-s-goods"></i>
+        			<span>载体管理</span>
+        			</template>
+        		</el-menu-item>
+        		<el-menu-item :index="menurouter.user">
+        			<template slot="title">
+        			<i class="el-icon-user-solid"></i>
+        			<span>人员管理</span>
+        			</template>
+        		</el-menu-item>
+        		<el-menu-item :index="menurouter.unit">
+        			<template slot="title">
+        			<i class="el-icon-s-home"></i>
+        			<span>单位管理</span>
+        			</template>
+        		</el-menu-item>
         </el-menu>
       </el-aside>
       <!-- 右侧内容主体 -->
@@ -58,9 +58,9 @@ export default {
       activePath: '',
       isCollapse: false,
       menurouter:{
-		welcome:'/welcome',
+		    welcome:'/home/welcome',
       	user:'/home/users',
-      	newTask:'/home/carrier',
+      	carrier:'/home/carrier',
       	unit:'/home/unit',
       }
     }

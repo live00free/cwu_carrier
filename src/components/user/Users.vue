@@ -6,7 +6,7 @@
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
     </el-breadcrumb>
     </el-card>
-    <el-card class="box-card">
+    <el-card>
     	<el-row :gutter="24">
 			<el-col :span="8">
 				<el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
