@@ -1,6 +1,6 @@
 <template>
 <div>
-	<el-card class="box-card">
+	<el-card>
 		<el-breadcrumb separator-class="el-icon-arrow-right">
 			<el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
 			<el-breadcrumb-item>单位管理</el-breadcrumb-item>
@@ -26,7 +26,7 @@
 </script>
 
 <style lang="less" scoped>
-	.box-card{
+	.el-card{
 		height: 100%;
 	}
 </style>
