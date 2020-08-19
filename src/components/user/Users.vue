@@ -6,7 +6,7 @@
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
     </el-breadcrumb>
     </el-card>
-    <el-card>
+    <el-card style="height:100%">
     	<el-row :gutter="24">
 			<el-col :span="8">
 				<el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
@@ -18,7 +18,7 @@
 			</el-col>
 		</el-row>
 		<el-row>
-			<el-table :data="userlist" style="width: 100%;height: 480px" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
+			<el-table :data="userlist" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
 				<el-table-column prop="serial" label="序号" style="width: 5%;" header-align="center" align="center"></el-table-column>
 				<el-table-column prop="fullname" label="姓名" style="width: 15%" header-align="center" align="center"></el-table-column>
 				<el-table-column prop="username" label="账号" style="width: 10%" header-align="center" align="center"></el-table-column>
