@@ -14,7 +14,7 @@
       <el-aside :width="isCollapse ? '64px' : '200px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
         <!-- 侧边栏菜单区域 -->
-        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
+        <el-menu background-color="#bec6d0ba" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
           <!-- 一级菜单 -->
           	<el-menu-item :index="menurouter.welcome">
         			<template slot="title">
@@ -91,7 +91,7 @@ export default {
 	height: 100%;
 }
 .el-header {
-	background-color: #373d41;
+	background-color: #459df5;
 	display: flex;
 	justify-content: space-between;
 	padding-left: 0;
@@ -108,7 +108,7 @@ export default {
 }
 
 .el-aside {
-	background-color: #333744;
+	background-color: #bec6d0ba;
 	.el-menu {
 		border-right: none;
 	}
@@ -124,7 +124,7 @@ export default {
 }
 
 .toggle-button {
-	background-color: #4a5064;
+	background-color: #105fa3c4;
 	font-size: 10px;
 	line-height: 24px;
 	color: #fff;
