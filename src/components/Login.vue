@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <el-header height="120px">
-        	<span class="sys-title">涉密载体管理系统</span>
+            <span class="sys-title">涉密载体管理系统</span>
         </el-header>
         <el-main>
             <div class="login_box">
@@ -16,8 +16,8 @@
                         <el-input v-model="loginForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
                     </el-form-item>
                     <el-form-item class="btns">
-                        <el-button type="primary" @click="login" >登录</el-button>
-                        <el-button type="primary" @click="resetLoginForm" >重置</el-button>
+                        <el-button type="primary" @click="login">登录</el-button>
+                        <el-button type="primary" @click="resetLoginForm">重置</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -35,7 +35,7 @@ export default {
             loginFormRules: {
                 username: [
                     { required: true, message: '请输入登录名称', trigger: 'blur' },
-                    { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                    { min: 3, max: 15, message: '长度在 3 到 10 个字符', trigger: 'blur' }
                 ],
                 password: [
                     { required: true, message: '请输入登录密码', trigger: 'blur' },
@@ -46,21 +46,16 @@ export default {
     },
     methods: {
         resetLoginForm() {
-            // console.log(this);
             this.$refs.loginFormRef.resetFields()
         },
         login() {
             this.$refs.loginFormRef.validate(async valid => {
-                if (!valid) return
-                //const { data: res } = await this.$http.post('login', this.loginForm)
-                // if (res.meta.status !== 200) return this.$message.error('登录失败！')
-                if (this.loginForm.username == 'admin' && this.loginForm.password == 'admin123') {
-                    window.sessionStorage.setItem('token', this.loginForm.username)
-                    this.$message.success('登录成功')
-                    this.$router.push('/home')
-                } else {
-                    this.$message.error('登录失败！')
-                }
+                if (!valid) return;
+                const { data: res } = await this.$http.post('login', this.loginForm);
+                if (res.code !== 200) return this.$message.error('登录失败！');
+                window.sessionStorage.setItem('token', res.data.token)
+                this.$message.success('登录成功')
+                this.$router.push('/home')
             })
         }
     }
@@ -112,27 +107,29 @@ export default {
 }
 
 .el-main {
-    background:url(../assets/login_bg.jpg);
-    height:100%;
+    background: url(../assets/login_bg.jpg);
+    height: 100%;
 }
 
 .el-header {
-    background:url(../assets/topnav_bg.png);
+    background: url(../assets/topnav_bg.png);
     line-height: 120px;
-   	text-align: center;
+    text-align: center;
 }
-.el-container{
-	height:100%;
+
+.el-container {
+    height: 100%;
 }
 
 .el-button--primary {
     height: 30px;
-    padding:0;
+    padding: 0;
     line-height: 30px;
     width: 150px;
-  }
-  .sys-title{
-  	font-size:50px;
-  	color:#151515B0;
-  }
+}
+
+.sys-title {
+    font-size: 50px;
+    color: #151515B0;
+}
 </style>
