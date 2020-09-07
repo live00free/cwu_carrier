@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import echarts from 'echarts'
 import {
   Button,
   Form,
@@ -39,7 +40,9 @@ import {
   Upload,
   Dropdown,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Carousel,
+  CarouselItem
 } from 'element-ui'
 
 Vue.use(Button)
@@ -80,6 +83,9 @@ Vue.use(Upload)
 Vue.use(Dropdown)
 Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
 
+Vue.prototype.$echarts = echarts
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
