@@ -9,7 +9,7 @@
         <el-card>
             <el-carousel :interval="4000" type="card" height="300px">
                 <el-carousel-item v-for="item in 4" :key="item">
-                    <div :id="myChart(item)" :style="{width: '600px', height: '300px'}"></div>
+                    <div :id="myChart(item)" :style="{width: '600px', height: '300px'}" class="myChart"></div>
                 </el-carousel-item>
             </el-carousel>
         </el-card>
@@ -204,6 +204,41 @@ export default {
                         }
                     }
                 }]
+            });
+
+            //組合统计
+            let myChart4 = this.$echarts.init(document.getElementById('myChart4'))
+            // 绘制图表
+            myChart4.setOption({
+
+                title: {
+                    text: '使用状态统计图',
+                    textStyle: {
+                        color: '#f6f2f2'
+                    },
+                    left: 'bottom'
+                },
+                legend: {},
+                tooltip: {},
+                dataset: {
+                    source: [
+                        ['数量', 'U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本'],
+                        ['单位1', 12, 20, 25, 20, 18, 35, 16],
+                        ['单位2', 22, 10, 23, 10, 10, 15, 26],
+                        ['单位3', 32, 40, 15, 25, 28, 20, 36]
+                    ]
+                },
+                xAxis: { type: 'category' },
+                yAxis: {},
+                series: [
+                    { type: 'bar' },
+                    { type: 'bar' },
+                    { type: 'bar' },
+                    { type: 'bar' },
+                    { type: 'bar' },
+                    { type: 'bar' },
+                    { type: 'bar' }
+                ]
             });
         },
         myChart(item) {
