@@ -57,7 +57,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-table :data="carrierlist" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
+          <el-table :data="carrierlist" :header-cell-style="{background:'#d3e0def5',color:'#303133'}" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
             <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="carriertype" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>

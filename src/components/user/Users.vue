@@ -18,7 +18,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-table :data="userlist" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
+        <el-table :data="userlist" :header-cell-style="{background:'#d3e0def5',color:'#303133'}" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
           <el-table-column prop="serial" label="序号" style="width: 5%;" header-align="center" align="center"></el-table-column>
           <el-table-column prop="fullname" label="姓名" style="width: 15%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="username" label="账号" style="width: 10%" header-align="center" align="center"></el-table-column>
@@ -27,7 +27,7 @@
           <el-table-column prop="department" label="部门" style="width: 10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="phone" label="联系方式" style="width: 10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="userrole" label="角色" style="width: 20%" header-align="center" align="center"></el-table-column>
-          <el-table-column label="操作" style="width: 20%">
+          <el-table-column label="操作" style="width: 20%" header-align="center" align="center">
             <template slot-scope="scope">
               <el-button @click="editUser(scope.row.id)" type="text" size="medium">编辑</el-button>
               <el-button @click="deleteUser(scope.row.id)" type="text" size="medium">删除</el-button>
@@ -400,7 +400,6 @@ export default {
       };
       this.userlist = res.users;
       this.total = res.total;
-      console.log(res);
     },
     // 监听 页码值 改变的事件
     handleCurrentChange (newPage) {
