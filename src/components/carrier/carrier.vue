@@ -49,21 +49,21 @@
         </el-col>
       </el-row>
       <el-row style="margin-bottom:5px">
-        <el-col :span="10" :offset="1">
+        <el-col :span="10" :offset="16">
           <el-button type="primary" plain @click="addDialogVisible = true" icon="el-icon-circle-plus">新建</el-button>
           <el-button type="primary" plain icon="el-icon-edit" @click="editCarrier">修改</el-button>
           <el-button type="primary" plain icon="el-icon-delete" @click="deleteCarrier">删除</el-button>
-          <el-dropdown>
+          <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
               更多操作<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-upload2">批量导入</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-download">批量导出</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-video-pause">停用</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-share">转借</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-right">移交</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-delete">销毁</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-upload2" command="a">批量导入</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-download" command="b">批量导出</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-video-pause" command="c">停用</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-share" command="d">转借</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-right" command="e">移交</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-delete" command="d">销毁</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -369,6 +369,27 @@
           <el-button type="primary" @click="editCarrier">确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="载体批量导入" :visible.sync="uploadDialogVisible" width="30%" @close="uploadDialogClosed" center>
+        <el-card shadow="never">
+          <el-divider content-position="left">
+            <el-tag type="success">导入模板下载</el-tag>
+          </el-divider>
+          <el-link type="primary">点击此链接下载载体批量导入模板</el-link>
+          <el-divider content-position="left">
+            <el-tag type="success">上传excel文件</el-tag>
+          </el-divider>
+          <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">请上传.xslx格式的excel文件</div>
+          </el-upload>
+        </el-card>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="uploadDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="updateBatch">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -431,6 +452,7 @@ export default {
       carrierlist: [],
       addDialogVisible: false,
       editDialogVisible: false,
+      uploadDialogVisible: false,
       addForm: {
         serial: '',
         number: '',
@@ -619,6 +641,9 @@ export default {
       this.$refs.editFormRef.resetFields();
       this.pcmesgshow = "display:none;";
     },
+    uploadDialogClosed () {
+      this.$refs.editFormRef.resetFields();
+    },
     addCarrier () {
       console.info(this.addForm);
       this.$refs.addFormRef.validate(async valid => {
@@ -725,6 +750,45 @@ export default {
           this.addFormRules.wkstate = "";
         }
       }
+    },
+    async handleCommand (command) {
+      let selections = this.$refs.multipleTable.selection;
+      if (command == "a") {
+        this.uploadDialogVisible = true;
+      } else if (command == "b") {
+        if (selections.length == 0) {
+          this.$message.error('请勾选需要导出的载体数据！')
+        } else {
+          this.$message.info("导出文件下载成功");
+        }
+      } else if (command == "c") {
+        if (selections.length == 0) {
+          this.$message.error('请勾选需要设置停用的载体数据！')
+        } else {
+          const confirmResult = await this.$confirm(
+            `此操作将停用该载体, 是否继续?`,
+            '提示',
+            {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+          ).catch(err => err)
+
+          // 如果用户确认删除，则返回值为字符串 confirm
+          // 如果用户取消了删除，则返回值为字符串 cancel
+          // console.log(confirmResult)
+          if (confirmResult !== 'confirm') {
+            return this.$message.info('已取消停用！')
+          } else {
+            return this.$message.success('设置停用成功！');
+          }
+        }
+      }
+    },
+    updateBatch () {
+      this.$message.success("导入成功");
+      this.uploadDialogVisible = false;
     }
   }
 }

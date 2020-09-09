@@ -6,7 +6,7 @@
         <img src="../assets/doc.png" alt="">
         <span class="sys-title">涉密载体登记管理系统</span>
       </div>
-      <span class="sys-title">欢迎登录,admin</span>
+      <span class="user-title" style="margin-left:55%">欢迎登录 Administrator</span>
       <el-button type="info" icon="el-icon-switch-button" @click="logout" circle></el-button>
     </el-header>
     <!-- 页面主体区域 -->
@@ -172,6 +172,12 @@ export default {
 }
 .sys-title {
   font-size: 25px;
+  color: #ffffff;
+  font-family: "宋体";
+  font-weight: bold;
+}
+.user-title {
+  font-size: 20px;
   color: #ffffff;
   font-family: "宋体";
   font-weight: bold;

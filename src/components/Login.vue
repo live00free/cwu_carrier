@@ -49,7 +49,7 @@ export default {
       this.$refs.loginFormRef.resetFields()
     },
     login () {
-      if (this.loginForm.username == 'admin' && this.loginForm.password == 'admin') {
+      if (this.loginForm.username == 'Administrator' && this.loginForm.password == 'administrator') {
         window.sessionStorage.setItem('token', this.loginForm.username);
         this.$message.success('登录成功');
         this.$router.push('/home');
