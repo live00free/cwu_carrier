@@ -22,6 +22,7 @@
         </el-form>
       </div>
     </el-main>
+    <el-footer height="100px">版权所有 &copy; 2020 XXXXXXXXXX</el-footer>
   </el-container>
 </template>
 <script>
@@ -119,6 +120,12 @@ export default {
 .el-header {
   background: url(../assets/topnav_bg.png);
   line-height: 120px;
+  text-align: center;
+}
+
+.el-footer {
+  background: url(../assets/topnav_bg.png);
+  line-height: 100px;
   text-align: center;
 }
 
