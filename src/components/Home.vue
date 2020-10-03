@@ -75,17 +75,17 @@ export default {
   },
   methods: {
     logout () {
-      window.sessionStorage.clear()
-      this.$router.push('/login')
+      window.sessionStorage.clear();
+      this.$router.push('/login');
     },
     // 点击按钮，切换菜单的折叠与展开
     toggleCollapse () {
-      this.isCollapse = !this.isCollapse
+      this.isCollapse = !this.isCollapse;
     },
     // 保存链接的激活状态
     saveNavState (activePath) {
-      window.sessionStorage.setItem('activePath', activePath)
-      this.activePath = activePath
+      window.sessionStorage.setItem('activePath', activePath);
+      this.activePath = activePath;
     }
   }
 }

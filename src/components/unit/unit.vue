@@ -10,20 +10,21 @@
       <el-col :span="8">
         <el-card class="unitcard">
           <el-row :gutter="8">
-            <el-col :offset="12">
-              <el-button type="primary" plain icon="el-icon-folder-opened" @click="unFoldAll">展开</el-button>
-              <el-button type="primary" plain icon="el-icon-folder" @click="collapseAll">折叠</el-button>
+            <el-col :offset="2">
+              <el-button type="primary" plain icon="el-icon-plus" @click="addTopUnit">添加顶层单位</el-button>
+              <el-button type="primary" plain icon="el-icon-folder-opened" @click="setAllExpand(true)">展开</el-button>
+              <el-button type="primary" plain icon="el-icon-folder" @click="setAllExpand(false)">折叠</el-button>
             </el-col>
           </el-row>
           <el-divider></el-divider>
           <el-row>
             <el-col>
-              <el-tree :data="data" node-key="id" :expand-on-click-node="false" ref="selectTree" :highlight-current="true" @node-click="getUserList">
+              <el-tree :data="unitData" node-key="id" :expand-on-click-node="false" ref="selectTree" :highlight-current="true" @node-click="selectNode">
                 <span class="custom-tree-node" slot-scope="{ node, data }">
                   <span>{{ node.label }}</span>
                   <span>
                     <el-button type="text" size="medium" @click="() => append(data)">添加</el-button>
-                    <el-button type="text" size="medium" @click="() => remove(node, data)">删除</el-button>
+                    <el-button type="text" size="medium" @click="() => remove(data)">删除</el-button>
                   </span>
                 </span>
               </el-tree>
@@ -34,151 +35,189 @@
       <el-col :span="16">
         <el-card class="unitusercard">
           <el-row>
-            <el-col>
-              <el-button type="primary" plain icon="el-icon-plus" @click="unFoldAll">添加用户</el-button>
+            <el-col :offset="10">
+              <span>单位部门人员</span>
             </el-col>
           </el-row>
           <el-divider></el-divider>
           <el-row>
             <el-col>
               <el-table :data="userlist" style="width: 100%;height: 100%" border :highlight-current-row=true :header-cell-style="{background:'#d3e0def5',color:'#303133'}" :row-style="{height:'40px'}" :cell-style="{padding:'0'}">
-                <el-table-column prop="serial" label="序号" style="width: 15%;" header-align="center" align="center"></el-table-column>
-                <el-table-column prop="fullname" label="姓名" style="width: 25%" header-align="center" align="center"></el-table-column>
-                <el-table-column prop="username" label="账号" style="width: 20%" header-align="center" align="center"></el-table-column>
-                <el-table-column prop="secret" label="密级" style="width: 20%" header-align="center" align="center"></el-table-column>
-                <el-table-column label="操作" style="width: 20%" header-align="center" align="center">
-                  <template slot-scope="scope">
-                    <el-button @click="deleteUser(scope.row.id)" type="text" size="medium">移除</el-button>
-                  </template>
-                </el-table-column>
+                <el-table-column prop="serial" label="序号" min-width="10%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="fullName" label="姓名" min-width="15%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="userName" label="账号" min-width="15%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="secret" label="密级" min-width="15%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="unit" label="单位" min-width="20%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="department" label="部门" min-width="25%" header-align="center" align="center"></el-table-column>
               </el-table>
             </el-col>
           </el-row>
           <el-row>
             <el-col>
-              <el-pagination @current-change="handleCurrentChange" background :page-size="queryInfo.pagesize" layout="total, prev, pager, next, jumper" :total="total">
+              <el-pagination @current-change="handleCurrentChange" background :page-size="queryInfo.pageSize" layout="total, prev, pager, next, jumper" :total="total">
               </el-pagination>
             </el-col>
           </el-row>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 添加顶层单位的对话框 -->
+    <el-dialog title="添加单位或部门" :visible.sync="addDialogVisible" width="40%" @close="addDialogClosed" center>
+      <!-- 内容主体区域 -->
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="small">
+        <el-card shadow="never">
+          <el-row :gutter="24">
+            <el-col :span="18" :offset="3">
+              <el-form-item label="名称" prop="label">
+                <el-input v-model="addForm.label"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="24">
+            <el-col :span="18" :offset="3">
+              <el-form-item label="是否单位" prop="isUnit">
+                <el-radio-group v-model="addForm.isUnit">
+                  <el-radio :label="true">是</el-radio>
+                  <el-radio :label="false">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addUnit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script type="text/javascript">
 let id = 1000;
 export default {
   data () {
-    const data = [{
-      id: 1,
-      label: '单位 1',
-      children: [{
-        id: 4,
-        label: '一所 1-1',
-        children: [{
-          id: 9,
-          label: '一部 1-1-1'
-        }, {
-          id: 10,
-          label: '二部 1-1-2'
-        }]
-      }]
-    }, {
-      id: 2,
-      label: '单位 2',
-      children: [{
-        id: 5,
-        label: '一所 2-1'
-      }, {
-        id: 6,
-        label: '二所 2-2'
-      }]
-    }, {
-      id: 3,
-      label: '单位 3',
-      children: [{
-        id: 7,
-        label: '一所 3-1'
-      }, {
-        id: 8,
-        label: '二所 3-2'
-      }]
-    }];
     return {
-      data: JSON.parse(JSON.stringify(data)),
-      data: JSON.parse(JSON.stringify(data)),
+      unitData: [],
       queryInfo: {
-        query: '',
+        isUnit: false,
+        label: '',
         // 当前的页数
-        pagenum: 1,
+        pageNum: 1,
         // 当前每页显示多少条数据
-        pagesize: 10
+        pageSize: 10
       },
       userlist: [],
-      total: 0
+      total: 0,
+      addForm: {
+        id: '',
+        label: '',
+        isUnit: '',
+        parentId: ''
+      },
+      addFormRules: {
+        label: [
+          { required: true, message: '请输入单位或部门名称', trigger: 'blur' },
+        ],
+        isUnit: [
+          { required: true, message: '请选择是否单位', trigger: 'blur' },
+        ]
+      },
+      addDialogVisible: false,
+      unitDTO: { id: '', label: '', isUnit: '', parentId: '' }
     }
   },
+  created () {
+    this.getUnitList();
+  },
   methods: {
-    append (data) {
-      const newChild = { id: id++, label: '部门一', children: [] };
-      if (!data.children) {
-        this.$set(data, 'children', []);
+    async getUnitList () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/unit/findAll');
+      if (res.code == 200) {
+        this.unitData = JSON.parse(JSON.stringify(res.data))
       }
-      data.children.push(newChild);
-    },
 
-    remove (node, data) {
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1);
     },
-    unFoldAll () {
-      let self = this;
-      let list = this.data;
-      for (let i = 0; i < list.length; i++) {
-        self.$refs.selectTree.store.nodesMap[list[i].id].expanded = true
+    addDialogClosed () {
+      this.$refs.addFormRef.resetFields();
+    },
+    addUnit () {
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return
+        // 可以发起添加用户的网络请求 
+        this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+        const { data: res } = await this.$http.post('carrier/unit/create-unit', this.addForm);
+
+        if (res.code == 500) {
+          return this.$message.error(res.msg);
+        }
+
+        if (res.code == 200) {
+          this.$message.success('添加单位部门成功！');
+          // 隐藏添加用户的对话框
+          this.addDialogVisible = false;
+          // 重新获取用户列表数据
+          this.getUnitList();
+        }
+
+      })
+    },
+    append (data) {
+      this.addDialogVisible = true;
+      this.addForm.parentId = data.id;
+    },
+    addTopUnit () {
+      this.addDialogVisible = true;
+      this.addForm.parentId = 0;
+    },
+    async remove (data) {
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该用户, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
+
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
+      }
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.delete('carrier/unit/deleteUnit/' + data.id);
+      if (res.code == 200) {
+        this.$message.success('删除成功！');
+        this.getUnitList();
+      } else {
+        this.$message.error(res.msg);
       }
     },
-    collapseAll () {
-      let self = this;
-      let list = this.data;
-      for (let i = 0; i < list.length; i++) {
-        self.$refs.selectTree.store.nodesMap[list[i].id].expanded = false
+    setAllExpand (state) {
+      var nodes = this.$refs.selectTree.store.nodesMap
+      for (var i in nodes) {
+        nodes[i].expanded = state;
       }
-    },
-    deleteUser (rowId) {
-      this.$message.success('用户移除成功！')
     },
     handleCurrentChange (newPage) {
-      this.queryInfo.pagenum = newPage;
+      this.queryInfo.pageNum = newPage;
       this.getUserList();
     },
-    getUserList (obj, node, data) {
-      const res = {
-        users: [{
-          id: '481243921',
-          serial: '1',
-          fullname: '站点管理员',
-          username: 'Administrator',
-          secret: '绝密'
-        }, {
-          id: '481243922',
-          serial: '2',
-          fullname: '王小明',
-          username: 'wangxiaoming',
-          secret: '非密'
-        }, {
-          id: '481243923',
-          serial: '3',
-          fullname: '王小东',
-          username: 'wangxiaoming',
-          secret: '非密'
-        }],
-        total: 3
-      };
-      this.userlist = res.users;
-      this.total = res.total;
+    async getUserList () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      this.queryInfo.isUnit = this.unitDTO.isUnit;
+      this.queryInfo.label = this.unitDTO.label;
+      const { data: res } = await this.$http.post('carrier/unit/findUnitUsers', this.queryInfo);
+      if (res.code == 200) {
+        this.userlist = res.data.datas;
+        this.total = res.data.total;
+      }
+    },
+    selectNode (obj, node, data) {
+      this.unitDTO = node.data;
+      this.getUserList();
     }
   }
 };
@@ -212,6 +251,6 @@ export default {
   height: 25px;
   padding: 0;
   line-height: 25px;
-  width: 100px;
+  width: 120px;
 }
 </style>

@@ -50,20 +50,20 @@ export default {
       this.$refs.loginFormRef.resetFields()
     },
     login () {
-      if (this.loginForm.username == 'Administrator' && this.loginForm.password == 'administrator') {
-        window.sessionStorage.setItem('token', this.loginForm.username);
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) return;
+        const { data: res } = await this.$http.post('login', this.loginForm);
+        if (res.code !== 200) return this.$message.error('登录失败！');
+        window.sessionStorage.setItem('token', res.data.token);
         this.$message.success('登录成功');
-        this.$router.push('/home');
-      } else {
-        this.$refs.loginFormRef.validate(async valid => {
-          if (!valid) return;
-          const { data: res } = await this.$http.post('login', this.loginForm);
-          if (res.code !== 200) return this.$message.error('登录失败！');
-          window.sessionStorage.setItem('token', res.data.token);
-          this.$message.success('登录成功');
+        let atPath = window.sessionStorage.getItem('activePath');
+        if (atPath) {
+          this.$router.push(atPath);
+        } else {
           this.$router.push('/home');
-        })
-      }
+        }
+
+      })
     }
   }
 }
