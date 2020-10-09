@@ -6,7 +6,7 @@
         <img src="../assets/doc.png" alt="">
         <span class="sys-title">涉密载体登记管理系统</span>
       </div>
-      <span class="user-title" style="margin-left:55%">欢迎登录 Administrator</span>
+      <span class="user-title" style="margin-left:55%">欢迎登录,{{loginUserName}}</span>
       <el-button type="info" icon="el-icon-switch-button" @click="logout" circle></el-button>
     </el-header>
     <!-- 页面主体区域 -->
@@ -56,6 +56,7 @@ export default {
   data () {
     return {
       activePath: '',
+      loginUserName: '',
       isCollapse: false,
       menurouter: {
         welcome: '/home/welcome',
@@ -72,6 +73,7 @@ export default {
     } else {
       this.activePath = '/home/welcome';
     }
+    this.getLoginUser();
   },
   methods: {
     logout () {
@@ -86,6 +88,14 @@ export default {
     saveNavState (activePath) {
       window.sessionStorage.setItem('activePath', activePath);
       this.activePath = activePath;
+    },
+    async getLoginUser () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/findLoginUser');
+      if (!res.fullName) {
+        return this.$message.error('获取登录用户失败！');
+      }
+      this.loginUserName = res.fullName;
     }
   }
 }

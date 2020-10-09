@@ -28,6 +28,7 @@
                 <el-option label="闪存盘" value="闪存盘"></el-option>
                 <el-option label="磁带" value="磁带"></el-option>
                 <el-option label="笔记本电脑" value="笔记本电脑"></el-option>
+                <el-option label="台式机" value="台式机"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="密级">
@@ -39,20 +40,8 @@
                 <el-option label="绝密" value="绝密"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="单位" prop="unit">
-              <el-select v-model="queryInfo.unit" placeholder="请选择">
-                <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="领用人" style="margin-left: 10px;">
+            <el-form-item label="领用人">
               <el-input v-model="queryInfo.fullName" placeholder="领用人"></el-input>
-            </el-form-item>
-            <el-form-item label="使用人" style="margin-left: 10px;">
-              <el-input v-model="queryInfo.useName" placeholder="领用人"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getCarrierList" plain icon="el-icon-search">查询</el-button>
@@ -63,7 +52,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-divider></el-divider>
+      <el-divider class="el-divider--horizontal2"></el-divider>
       <el-row style="margin-bottom:5px">
         <el-col :span="10" :offset="14">
           <el-button type="primary" plain @click="addDialogVisible = true" icon="el-icon-circle-plus">新建</el-button>
@@ -79,7 +68,6 @@
               <el-dropdown-item icon="el-icon-video-pause" command="c">停用</el-dropdown-item>
               <el-dropdown-item icon="el-icon-share" command="d">转借</el-dropdown-item>
               <el-dropdown-item icon="el-icon-right" command="e">移交</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-delete" command="d">销毁</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -90,7 +78,11 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="carrierId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center">
+              <template slot-scope='scope'>
+                <router-link v-bind:to="{path:'/home/detail',query:{carrierId:scope.row.carrierId,page:'carrier'}}">{{scope.row.number}}</router-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="fullName" label="领用人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useName" label="使用人" width="150" header-align="center" align="center"></el-table-column>
@@ -98,18 +90,18 @@
             <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useFor" label="用途" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useDate" label="领用日期" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useDate" label="领用日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="proSerial" label="产品序列号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="size" label="容量" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="proSerial" label="产品序列号" width="250" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="size" label="容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="proColor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="systemDate" label="系统安装日期" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypSerial" label="硬盘序列号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypSize" label="硬盘容量" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="systemDate" label="系统安装日期" width="150" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -119,7 +111,7 @@
       </el-row>
       <el-dialog title="载体录入" :visible.sync="addDialogVisible" width="45%" @close="addDialogClosed" center>
         <!-- 内容主体区域 -->
-        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="mini">
+        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="small">
           <el-card shadow="never">
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
@@ -416,20 +408,20 @@
           <el-divider content-position="left">
             <el-tag type="success">导入模板下载</el-tag>
           </el-divider>
-          <el-link type="primary">点击此链接下载载体批量导入模板</el-link>
+          <el-link type="primary" :underline="false" :href="fileURL" download="载体批量导入模板.xlsx" target="_blank">点击此链接下载载体批量导入模板</el-link>
           <el-divider content-position="left">
             <el-tag type="success">上传excel文件</el-tag>
           </el-divider>
-          <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+          <el-upload class="upload-demo" ref="upload" drag :action="actionUrl" :auto-upload="false" :headers="myHeaders" :multiple="false" :before-upload="beforeUpload" :on-change="handleChange">
             <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击选择文件</em></div>
             <div class="el-upload__tip" slot="tip">请上传.xslx格式的excel文件</div>
           </el-upload>
         </el-card>
         <!-- 底部区域 -->
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="uploadDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateBatch">确 定</el-button>
+          <el-button type="primary" @click="submitUpload">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 选择部门的对话框 -->
@@ -475,6 +467,8 @@ export default {
         // 当前每页显示多少条数据
         pageSize: 10
       },
+      fileURL: '载体批量导入模板.xlsx',
+      actionUrl: this.$http.defaults.baseURL + 'carrier/main/importCarriers',
       editForm: {},
       total: 0,
       unitData: [],
@@ -557,6 +551,9 @@ export default {
       }, {
         value: '笔记本电脑',
         label: '笔记本电脑'
+      }, {
+        value: '台式机',
+        label: '台式机'
       }],
       options: [{
         value: '非密',
@@ -590,7 +587,9 @@ export default {
         value: '销毁',
         label: '销毁'
       }],
-      unitOptions: []
+      unitOptions: [],
+      fileList: [],
+      myHeaders: { Authorization: window.sessionStorage.getItem('token') }
     }
   },
   created () {
@@ -602,10 +601,10 @@ export default {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
       const { data: res } = await this.$http.post('carrier/main/findAllCarriers', this.queryInfo)
       if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！');
+        return this.$message.error('获取载体列表失败！');
       }
       this.carrierlist = res.data.datas;
-      this.total = res.total;
+      this.total = res.data.total;
     },
     selectDepartmentClosed () {
 
@@ -665,13 +664,13 @@ export default {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
       const { data: res } = await this.$http.get('carrier/unit/findAllUnits')
       if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！');
+        return this.$message.error('获取部门列表失败！');
       }
       this.unitOptions = res.data;
     },
     handleCurrentChange (newPage) {
-      this.queryInfo.pageNum = newPage
-      this.getUserList()
+      this.queryInfo.pageNum = newPage;
+      this.getCarrierList();
     },
     onSubmit () {
       console.log('submit!');
@@ -694,13 +693,13 @@ export default {
       this.pcmesgshow = "display:none;";
     },
     uploadDialogClosed () {
-      this.$refs.editFormRef.resetFields();
+      //   this.$refs.editFormRef.resetFields();
     },
     addCarrier () {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return
         // 可以发起添加用户的网络请求
-        console.info(this.addForm);
+        this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
         const { data: res } = await this.$http.post('carrier/main/createCarrier', this.addForm)
         if (res.code == 500) {
           return this.$message.error(res.msg);
@@ -723,7 +722,7 @@ export default {
         }
         cb(new Error('容量为数字'))
       }
-      if (this.addForm.carrierType && this.addForm.carrierType == "笔记本电脑") {
+      if (this.addForm.carrierType && (this.addForm.carrierType == "笔记本电脑" || this.addForm.carrierType == "台式机")) {
         this.pcmesgshow = "display:block;";
         this.addFormRules.ypSize = [
           { required: true, message: '请输入硬盘容量', trigger: 'blur' },
@@ -768,12 +767,12 @@ export default {
           return this.$message.info('已取消删除')
         }
         this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
-        const { data: res } = await this.$http.delete('carrier/main/deleteCarrier/' + selections[0].carrierId);
+        const { data: res } = await this.$http.post('carrier/main/deleteCarrier', selections);
 
         if (res.code == 500) {
           return this.$message.error(res.msg);
         }
-        this.$message.success('删除用户成功！');
+        this.$message.success('删除成功！');
         this.getCarrierList();
       }
     },
@@ -786,7 +785,7 @@ export default {
       } else if (selections.length == 1) {
         this.editForm = selections[0];
         this.editDialogVisible = true;
-        if (this.editForm.carrierType && this.editForm.carrierType == "笔记本电脑") {
+        if (this.editForm.carrierType && (this.editForm.carrierType == "笔记本电脑" || this.editForm.carrierType == "台式机")) {
           this.pcmesgshow = "display:block;";
           this.addFormRules.ypSize = [
             { required: true, message: '请输入硬盘容量', trigger: 'blur' },
@@ -814,7 +813,7 @@ export default {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
         // 可以发起添加用户的网络请求
-        console.info(this.editForm);
+        this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
         const { data: res } = await this.$http.put('carrier/main/editCarrier/' + this.editForm.carrierId, this.editForm)
         if (res.code == 500) {
           return this.$message.error(res.msg);
@@ -833,11 +832,7 @@ export default {
       if (command == "a") {
         this.uploadDialogVisible = true;
       } else if (command == "b") {
-        if (selections.length == 0) {
-          this.$message.error('请勾选需要导出的载体数据！')
-        } else {
-          this.$message.info("导出文件下载成功");
-        }
+        this.downLoadCarriers(selections);
       } else if (command == "c") {
         if (selections.length == 0) {
           this.$message.error('请勾选需要设置停用的载体数据！')
@@ -863,9 +858,98 @@ export default {
         }
       }
     },
-    updateBatch () {
+    async downLoadCarriers (selections) {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      this.$http({
+        method: "post",
+        url: "carrier/main/downLoadCarriers",
+        data: selections,
+        responseType: "blob"
+      })
+        .then(res => {
+          // console.log(decodeURI(res.headers['filename']));
+          const link = document.createElement("a");
+          let blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute("download", decodeURI(res.headers['filename']));
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch(error => {
+          this.$Notice.error({
+            title: "错误",
+            desc: "系统数据错误"
+          });
+          console.log(error);
+        });
+    },
+    downloadFile (data, filename) {
+      const link = document.createElement('a');
+      let blob = new Blob([res.data], { type: 'application/vnd.ms-excel' });
+      link.style.display = 'none';
+      link.href = URL.createObjectURL(blob);
+      let num = '';
+      for (let i = 0; i < 10; i++) {
+        num += Math.ceil(Math.random() * 10)
+      }
+      link.setAttribute('download', filename + '.xls');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link)
+    },
+    dateFormat (row, column, cellValue, index) {
+      const daterc = row[column.property]
+      if (daterc != null) {
+        const dateMat = new Date(daterc);
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const hh = dateMat.getHours();
+        const mm = dateMat.getMinutes();
+        const ss = dateMat.getSeconds();
+        const timeFormat = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+        return timeFormat;
+      }
+    },
+    dateFormater (row, column, cellValue, index) {
+      const daterc = row[column.property]
+      if (daterc != null) {
+        const dateMat = new Date(daterc);
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const timeFormat = year + "-" + month + "-" + day;
+        return timeFormat;
+      }
+    },
+    sizeFormater (row, column, cellValue, index) {
+      if (cellValue) {
+        return cellValue + "G";
+      }
+      return "";
+    },
+    submitUpload (file, fileList) {
+      this.$refs.upload.submit();
       this.$message.success("导入成功");
       this.uploadDialogVisible = false;
+      location.reload();
+    },
+    beforeUpload (file) {
+      if (file.size / 1024 / 1024 > 5) {
+        this.$message.warning('上传文件不超过5M')
+        return false
+      }
+      var ext = file.name.substring(file.name.lastIndexOf('.') + 1)
+      const extension = ext === 'xlsx';
+      if (!extension) {
+        this.$message.warning('上传文件格式只能为xlsx')
+        return false
+      }
+    },
+    handleChange (file, fileList) {
+      this.fileList = fileList;
     }
   }
 }
@@ -899,7 +983,13 @@ export default {
   font-size: 14px;
   margin-bottom: 20px;
 }
-.el-divider--horizontal {
+.el-divider--horizontal2 {
   margin: 8px 0;
+}
+.el-input--mini {
+  width: 150px;
+}
+.el-select--mini {
+  width: 180px;
 }
 </style>

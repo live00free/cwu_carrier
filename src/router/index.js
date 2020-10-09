@@ -6,6 +6,7 @@ import Welcome from '../components/Welcome.vue'
 import Users from '../components/user/Users.vue'
 import carrier from '../components/carrier/carrier.vue'
 import unit from '../components/unit/unit.vue'
+import detail from '../components/carrier/detail.vue'
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
@@ -34,11 +35,15 @@ const routes = [{
             },
             {
                 path: '/home/carrier',
-                component: carrier
+                component: carrier,
             },
             {
                 path: '/home/unit',
                 component: unit
+            },
+            {
+                path: '/home/detail',
+                component: detail
             }
         ]
     }
@@ -51,7 +56,6 @@ const router = new VueRouter({
 // 挂载路由导航守卫
 router.beforeEach((to, from, next) => {
     if (to.path === '/login') return next();
-    console.info(to.path);
     // 获取token
     const tokenStr = window.sessionStorage.getItem('token');
     if (!tokenStr) return next('/login');

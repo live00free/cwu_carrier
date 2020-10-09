@@ -16,41 +16,44 @@
     <el-card>
       <el-row>
         <el-col :span="24">
-          <el-form :inline="true" :model="formInline" class="demo-form-inline" size="small">
+          <el-form :inline="true" :model="queryInfo" class="demo-form-inline" size="mini">
             <el-form-item label="领用人" style="margin-left: 30px;">
-              <el-input v-model="formInline.user" placeholder="领用人"></el-input>
+              <el-input v-model="queryInfo.fullName" placeholder="领用人"></el-input>
             </el-form-item>
             <el-form-item label="载体类型">
-              <el-select v-model="formInline.region" placeholder="载体类型">
-                <el-option label="U盘" value="upan"></el-option>
-                <el-option label="移动硬盘" value="ydpan"></el-option>
-                <el-option label="光盘" value="gpan"></el-option>
-                <el-option label="软盘" value="ruanpan"></el-option>
-                <el-option label="闪存盘" value="shcpan"></el-option>
-                <el-option label="磁带" value="cipan"></el-option>
-                <el-option label="笔记本电脑" value="yddiannao"></el-option>
+              <el-select v-model="queryInfo.carrierType" placeholder="载体类型">
+                <el-option label="U盘" value="U盘"></el-option>
+                <el-option label="移动硬盘" value="移动硬盘"></el-option>
+                <el-option label="光盘" value="光盘"></el-option>
+                <el-option label="软盘" value="软盘"></el-option>
+                <el-option label="闪存盘" value="闪存盘"></el-option>
+                <el-option label="磁带" value="磁带"></el-option>
+                <el-option label="笔记本电脑" value="笔记本电脑"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="密级">
-              <el-select v-model="formInline.miji" placeholder="密级">
-                <el-option label="公开" value="gongkai"></el-option>
-                <el-option label="内部" value="neibu"></el-option>
-                <el-option label="秘密" value="mimi"></el-option>
-                <el-option label="机密" value="jimi"></el-option>
-                <el-option label="绝密" value="juemi"></el-option>
+              <el-select v-model="queryInfo.secret" placeholder="密级">
+                <el-option label="公开" value="公开"></el-option>
+                <el-option label="内部" value="内部"></el-option>
+                <el-option label="秘密" value="秘密"></el-option>
+                <el-option label="机密" value="机密"></el-option>
+                <el-option label="绝密" value="绝密"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="使用情况">
-              <el-select v-model="formInline.usage" placeholder="使用情况">
-                <el-option label="在用" value="zaiyong"></el-option>
-                <el-option label="停用" value="tingyong"></el-option>
-                <el-option label="转借" value="zhuanjie"></el-option>
-                <el-option label="移交" value="yijiao"></el-option>
-                <el-option label="销毁" value="xiaohui"></el-option>
+              <el-select v-model="queryInfo.useState" placeholder="使用情况">
+                <el-option label="在用" value="在用"></el-option>
+                <el-option label="停用" value="停用"></el-option>
+                <el-option label="转借" value="转借"></el-option>
+                <el-option label="移交" value="移交"></el-option>
+                <el-option label="销毁" value="销毁"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit" plain icon="el-icon-search">查询</el-button>
+              <el-button type="primary" @click="getCarrierList" plain icon="el-icon-search">查询</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="resetCarrierList" plain icon="el-icon-refresh-left">重置</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -58,30 +61,37 @@
       <el-row>
         <el-col :span="24">
           <el-table :data="carrierlist" :header-cell-style="{background:'#d3e0def5',color:'#303133'}" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
+            <el-table-column prop="carrierId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="carriertype" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="fullname" label="领用人" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center">
+              <template slot-scope='scope'>
+                <router-link v-bind:to="{path:'/home/detail',query:{carrierId:scope.row.carrierId,page:'welcome'}}">{{scope.row.number}}</router-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="fullName" label="领用人" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useName" label="使用人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="unit" label="单位" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="usefor" label="用途" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="usedate" label="领用日期" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useFor" label="用途" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useDate" label="领用日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="proserial" label="产品序列号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="size" label="容量" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="usestate" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="procolor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="gqstate" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="wkstate" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="systemversion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="systemdate" label="系统安装日期" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypserial" label="硬盘序列号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypsize" label="硬盘容量" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="proSerial" label="产品序列号" width="250" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="size" label="容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="proColor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="systemDate" label="系统安装日期" width="150" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
           </el-table>
         </el-col>
       </el-row>
       <el-row>
-        <el-pagination @current-change="handleCurrentChange" background :page-size="queryInfo.pagesize" layout="total, prev, pager, next, jumper" :total="total">
+        <el-pagination @current-change="handleCurrentChange" background :page-size="queryInfo.pageSize" layout="total, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-row>
     </el-card>
@@ -92,19 +102,20 @@ export default {
   data () {
     return {
       queryInfo: {
-        query: '',
+        unit: '',
+        fullName: '',
+        carrierType: '',
+        secret: '',
+        useState: '',
+        useName: '',
         // 当前的页数
-        pagenum: 1,
+        pageNum: 1,
         // 当前每页显示多少条数据
-        pagesize: 10
+        pageSize: 10
       },
-      formInline: {
-        user: '',
-        region: '',
-        miji: '',
-        usage: ''
-      },
+      total: 0,
       carrierlist: [],
+      unitOptions: [],
       addDialogVisible: false
     }
   },
@@ -112,86 +123,73 @@ export default {
     this.drawLine();
   },
   created () {
-    this.getCarrierList()
+    this.getCarrierList();
+    this.getUserUnits();
   },
   methods: {
     onSubmit () {
       console.log('submit!');
     },
     handleCurrentChange (newPage) {
-      this.queryInfo.pagenum = newPage
+      this.queryInfo.pageNum = newPage
       this.getUserList()
     },
     async getCarrierList () {
-      const res = {
-        carriers: [
-          {
-            serial: '1',
-            number: 'ZT-0001',
-            carriertype: 'U盘',
-            fullname: '小明',
-            unit: '单位1',
-            secret: '秘密',
-            usefor: '存储',
-            usedate: "2020-09-08",
-            product: '索尼',
-            proserial: '23aea4124124s',
-            size: '64G',
-            usestate: '在用',
-            procolor: '蓝色',
-            gqstate: '',
-            wkstate: '',
-            systemversion: '',
-            systemdate: '',
-            ypserial: '',
-            ypsize: ''
-          },
-          {
-            serial: '2',
-            number: 'ZT-0002',
-            carriertype: 'U盘',
-            fullname: '小红',
-            unit: '单位1',
-            secret: '非密',
-            usefor: '存储',
-            usedate: "2020-09-08",
-            product: '金斯顿',
-            proserial: '23aea4124124s',
-            size: '64G',
-            usestate: '在用',
-            procolor: '蓝色',
-            gqstate: '',
-            wkstate: '',
-            systemversion: '',
-            systemdate: '',
-            ypserial: '',
-            ypsize: ''
-          },
-          {
-            serial: '3',
-            number: 'ZT-0003',
-            carriertype: '笔记本电脑',
-            fullname: '小李',
-            unit: '单位2',
-            secret: '秘密',
-            usefor: '办公',
-            usedate: "2020-09-04",
-            product: '联想',
-            proserial: '23aea4124124s',
-            size: '',
-            usestate: '在用',
-            procolor: '黑色',
-            gqstate: '无',
-            wkstate: '无',
-            systemversion: 'win7',
-            systemdate: '2020-09-08',
-            ypserial: 'aweg3242gshgae',
-            ypsize: '500G'
-          }
-        ], total: 3
-      };
-      this.carrierlist = res.carriers;
-      this.total = res.total;
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.post('carrier/overview/findAllCarriers', this.queryInfo)
+      if (res.code !== 200) {
+        return this.$message.error('获取载体列表失败！');
+      }
+      this.carrierlist = res.data.datas;
+      this.total = res.data.total;
+    },
+    resetCarrierList () {
+      this.queryInfo.unit = '';
+      this.queryInfo.fullName = '';
+      this.queryInfo.carrierType = '';
+      this.queryInfo.secret = '';
+      this.queryInfo.useState = '';
+      this.queryInfo.useName = '';
+      this.getCarrierList();
+    },
+    async getUserUnits () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/unit/findAllUnits')
+      if (res.code !== 200) {
+        return this.$message.error('获取单位列表失败！');
+      }
+      this.unitOptions = res.data;
+    },
+    dateFormat (row, column, cellValue, index) {
+      const daterc = row[column.property]
+      if (daterc != null) {
+        const dateMat = new Date(daterc);
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const hh = dateMat.getHours();
+        const mm = dateMat.getMinutes();
+        const ss = dateMat.getSeconds();
+        const timeFormat = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+        return timeFormat;
+      }
+    },
+    dateFormater (row, column, cellValue, index) {
+      const daterc = row[column.property]
+      if (daterc != null) {
+        const dateMat = new Date(daterc);
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const timeFormat = year + "-" + month + "-" + day;
+        return timeFormat;
+      }
+    },
+    sizeFormater (row, column, cellValue, index) {
+      if (cellValue) {
+        return cellValue + "G";
+      }
+      return "";
     },
     drawLine () {
       // 载体类型数量
@@ -350,5 +348,11 @@ export default {
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #79ebc9;
+}
+.el-input--mini {
+  width: 150px;
+}
+.el-select--mini {
+  width: 180px;
 }
 </style>

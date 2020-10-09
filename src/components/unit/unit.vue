@@ -11,7 +11,7 @@
         <el-card class="unitcard">
           <el-row :gutter="8">
             <el-col :offset="2">
-              <el-button type="primary" plain icon="el-icon-plus" @click="addTopUnit">添加顶层单位</el-button>
+              <el-button type="primary" plain icon="el-icon-plus" @click="addTopUnit" :disabled="limit.createTopUnit">添加顶层单位</el-button>
               <el-button type="primary" plain icon="el-icon-folder-opened" @click="setAllExpand(true)">展开</el-button>
               <el-button type="primary" plain icon="el-icon-folder" @click="setAllExpand(false)">折叠</el-button>
             </el-col>
@@ -23,8 +23,8 @@
                 <span class="custom-tree-node" slot-scope="{ node, data }">
                   <span>{{ node.label }}</span>
                   <span>
-                    <el-button type="text" size="medium" @click="() => append(data)">添加</el-button>
-                    <el-button type="text" size="medium" @click="() => remove(data)">删除</el-button>
+                    <el-button type="text" size="medium" @click="() => append(data)" :disabled="limit.createUnit">添加</el-button>
+                    <el-button type="text" size="medium" @click="() => remove(data)" :disabled="limit.deleteUnit">删除</el-button>
                   </span>
                 </span>
               </el-tree>
@@ -116,6 +116,7 @@ export default {
         isUnit: '',
         parentId: ''
       },
+      limit: { createTopUnit: false, createUnit: false, deleteUnit: false, createUser: false, deleteUser: false, updateUser: false, deleteTopUnit: false },
       addFormRules: {
         label: [
           { required: true, message: '请输入单位或部门名称', trigger: 'blur' },
@@ -130,6 +131,7 @@ export default {
   },
   created () {
     this.getUnitList();
+    this.getUserLimit();
   },
   methods: {
     async getUnitList () {
@@ -139,6 +141,14 @@ export default {
         this.unitData = JSON.parse(JSON.stringify(res.data))
       }
 
+    },
+    async getUserLimit () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/userLimit')
+      if (res.code !== 200) {
+        return this.$message.error('获取用户列表失败！');
+      }
+      this.limit = res.data;
     },
     addDialogClosed () {
       this.$refs.addFormRef.resetFields();
@@ -182,6 +192,10 @@ export default {
           type: 'warning'
         }
       ).catch(err => err)
+
+      if (data.parentId == 0 && this.limit.deleteTopUnit) {
+        return this.$message.warning("该单位信息不允许删除");
+      }
 
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')

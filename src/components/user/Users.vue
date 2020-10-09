@@ -14,24 +14,25 @@
           </el-input>
         </el-col>
         <el-col :span="4" :push="13">
-          <el-button type="primary" @click="addDialogVisible = true" size='medium' icon="el-icon-circle-plus">添加用户</el-button>
+          <el-button type="primary" @click="addDialogVisible = true" size='medium' icon="el-icon-circle-plus" :disabled="limit.createUser">添加用户</el-button>
         </el-col>
       </el-row>
       <el-row>
         <el-table :data="userlist" :header-cell-style="{background:'#d3e0def5',color:'#303133'}" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
-          <el-table-column prop="serial" label="序号" style="width: 5%;" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="serial" label="序号" min-width="5%;" header-align="center" align="center"></el-table-column>
           <el-table-column prop="userId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="fullName" label="姓名" style="width: 10%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="userName" label="账号" style="width: 10%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="secret" label="密级" style="width: 10%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="unit" label="单位" style="width: 15%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="department" label="部门" style="width: 15%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="telephone" label="电话" style="width: 10%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="mobilePhone" label="手机号" style="width: 10%" header-align="center" align="center"></el-table-column>
-          <el-table-column label="操作" style="width: 15%" header-align="center" align="center">
+          <el-table-column prop="fullName" label="姓名" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="userName" label="账号" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="secret" label="密级" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="unit" label="单位" min-width="12.5%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="department" label="部门" min-width="12.5%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="telephone" label="电话" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="mobilePhone" label="手机号" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="role" label="角色" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column label="操作" min-width="10%" header-align="center" align="center">
             <template slot-scope="scope">
               <el-button @click="editUser(scope.row.userId)" type="text" size="medium">编辑</el-button>
-              <el-button @click="deleteUser(scope.row.userId)" type="text" size="medium">删除</el-button>
+              <el-button @click="deleteUser(scope.row.userId)" type="text" size="medium" :disabled="limit.deleteUser">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -47,14 +48,14 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="用户名" prop="fullName">
-                  <el-input v-model="editForm.fullName"></el-input>
+                  <el-input v-model="editForm.fullName" :disabled="limit.updateUser"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="账号" prop="userName">
-                  <el-input v-model="editForm.userName"></el-input>
+                  <el-input v-model="editForm.userName" :disabled="limit.updateUser"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -68,7 +69,7 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="密级" prop="secret">
-                  <el-select v-model="editForm.secret" placeholder="请选择">
+                  <el-select v-model="editForm.secret" placeholder="请选择" :disabled="limit.updateUser">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                   </el-select>
                 </el-form-item>
@@ -77,7 +78,7 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="单位" prop="unit">
-                  <el-select v-model="editForm.unit" placeholder="请选择">
+                  <el-select v-model="editForm.unit" placeholder="请选择" :disabled="limit.updateUser">
                     <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                   </el-select>
                 </el-form-item>
@@ -86,8 +87,8 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="部门" prop="department">
-                  <el-input v-model="editForm.department">
-                    <el-button slot="append" icon="el-icon-s-home" @click="openSelectDpedit"></el-button>
+                  <el-input v-model="editForm.department" :disabled="limit.updateUser">
+                    <el-button slot="append" icon="el-icon-s-home" @click="openSelectDpedit" :disabled="limit.updateUser"></el-button>
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -103,6 +104,15 @@
               <el-col :span="18" :offset="3">
                 <el-form-item label="手机号" prop="mobilePhone">
                   <el-input v-model="editForm.mobilePhone"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="24">
+              <el-col :span="18" :offset="3">
+                <el-form-item label="角色" prop="role">
+                  <el-select v-model="editForm.role" placeholder="请选择" :disabled="limit.updateUser">
+                    <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -181,6 +191,15 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="24">
+              <el-col :span="18" :offset="3">
+                <el-form-item label="角色" prop="role">
+                  <el-select v-model="addForm.role" placeholder="请选择">
+                    <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-card>
         </el-form>
         <!-- 底部区域 -->
@@ -214,17 +233,14 @@
 <script type="text/javascript">
 export default {
   data () {
-    // 验证邮箱的规则
     var checkPassword = (rule, value, cb) => {
-      // 验证邮箱的正则表达式
-      const regPassword = /(?!^(\d+|[a-zA-Z]+|[~!\W*?]+)$)^[\w~!\W*?]{10,}$/
+      const regPassword = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,30}$/
 
       if (regPassword.test(value)) {
-        // 合法的邮箱
         return cb()
       }
 
-      cb(new Error('密码必须包含字母、数字、特殊字符中的两种且长度为10位以上'))
+      cb(new Error('请输入8位以上密码，密码中必须同时包含数字、字母'))
     }
 
     // 验证手机号的规则
@@ -249,22 +265,30 @@ export default {
         pageSize: 8
       },
       unitOptions: [],
-      options: [{
-        value: '非密',
-        label: '非密'
+      roleOptions: [{
+        value: '总负责人',
+        label: '总负责人'
       }, {
-        value: '内部',
-        label: '内部'
+        value: '单位负责人',
+        label: '单位负责人'
       }, {
-        value: '秘密',
-        label: '秘密'
-      }, {
-        value: '机密',
-        label: '机密'
-      }, {
-        value: '绝密',
-        label: '绝密'
+        value: '普通用户',
+        label: '普通用户'
       }],
+      options: [{
+        value: '非密人员',
+        label: '非密人员'
+      }, {
+        value: '一般涉密人员',
+        label: '一般涉密人员'
+      }, {
+        value: '重要涉密人员',
+        label: '重要涉密人员'
+      }, {
+        value: '核心涉密人员',
+        label: '核心涉密人员'
+      }],
+      limit: { createTopUnit: false, createUnit: false, deleteUnit: false, createUser: false, deleteUser: false, updateUser: false, deleteTopUnit: false },
       userlist: [],
       total: 0,
       // 控制添加用户对话框的显示与隐藏
@@ -278,7 +302,8 @@ export default {
         unit: '',
         department: '',
         telephone: '',
-        mobilePhone: ''
+        mobilePhone: '',
+        role: ''
       },
       // 添加表单的验证规则对象
       addFormRules: {
@@ -286,8 +311,8 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' },
           {
             min: 3,
-            max: 10,
-            message: '用户名的长度在3~10个字符之间',
+            max: 16,
+            message: '用户名的长度在3~16个字符之间',
             trigger: 'blur'
           }
         ],
@@ -295,8 +320,8 @@ export default {
           { required: true, message: '请输入账号', trigger: 'blur' },
           {
             min: 3,
-            max: 10,
-            message: '账号名的长度在3~10个字符之间,',
+            max: 16,
+            message: '账号名的长度在3~16个字符之间,',
             trigger: 'blur'
           }
         ],
@@ -312,6 +337,9 @@ export default {
         ],
         department: [
           { required: true, message: '请选择部门', trigger: 'blur' }
+        ],
+        role: [
+          { required: true, message: '请选择角色', trigger: 'blur' }
         ]
       },
       editFormRules: {
@@ -319,8 +347,8 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' },
           {
             min: 3,
-            max: 10,
-            message: '用户名的长度在3~10个字符之间',
+            max: 16,
+            message: '用户名的长度在3~16个字符之间',
             trigger: 'blur'
           }
         ],
@@ -328,8 +356,8 @@ export default {
           { required: true, message: '请输入账号', trigger: 'blur' },
           {
             min: 3,
-            max: 10,
-            message: '账号名的长度在3~10个字符之间,',
+            max: 16,
+            message: '账号名的长度在3~16个字符之间,',
             trigger: 'blur'
           }
         ],
@@ -344,6 +372,9 @@ export default {
         ],
         department: [
           { required: true, message: '请选择部门', trigger: 'blur' }
+        ],
+        role: [
+          { required: true, message: '请选择角色', trigger: 'blur' }
         ]
       },
       // 控制修改用户对话框的显示与隐藏
@@ -366,6 +397,7 @@ export default {
   created () {
     this.getUserList();
     this.getUserUnits();
+    this.getUserLimit();
   },
   methods: {
     async getUserList () {
@@ -376,6 +408,14 @@ export default {
       }
       this.userlist = res.data.datas;
       this.total = res.data.total;
+    },
+    async getUserLimit () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/userLimit')
+      if (res.code !== 200) {
+        return this.$message.error('获取用户列表失败！');
+      }
+      this.limit = res.data;
     },
     async getDepartMents () {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
