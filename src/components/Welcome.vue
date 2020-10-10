@@ -29,6 +29,7 @@
                 <el-option label="闪存盘" value="闪存盘"></el-option>
                 <el-option label="磁带" value="磁带"></el-option>
                 <el-option label="笔记本电脑" value="笔记本电脑"></el-option>
+                <el-option label="台式机" value="台式机"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="密级">
@@ -45,7 +46,6 @@
                 <el-option label="在用" value="在用"></el-option>
                 <el-option label="停用" value="停用"></el-option>
                 <el-option label="转借" value="转借"></el-option>
-                <el-option label="移交" value="移交"></el-option>
                 <el-option label="销毁" value="销毁"></el-option>
               </el-select>
             </el-form-item>

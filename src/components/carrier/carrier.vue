@@ -15,8 +15,6 @@
                 <el-option label="在用" value="在用"></el-option>
                 <el-option label="停用" value="停用"></el-option>
                 <el-option label="转借" value="转借"></el-option>
-                <el-option label="移交" value="移交"></el-option>
-                <el-option label="销毁" value="销毁"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="载体类型">
@@ -440,6 +438,44 @@
           <el-button type="primary" @click="selectDP">确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="设置借用者" :visible.sync="borrowDialogVisible" width="40%" @close="borrowDialogClosed" center>
+        <!-- 内容主体区域 -->
+        <el-form :model="borrowForm" :rules="borrowFormRules" ref="borrowFormRef" label-width="100px" label-position="right" size="small">
+          <el-card shadow="never">
+            <el-row :gutter="24">
+              <el-col :span="18" :offset="3">
+                <el-form-item label="借用者" prop="userName">
+                  <el-input v-model="borrowForm.userName"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="borrowDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="borrow">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="设置移交接收人" :visible.sync="transferDialogVisible" width="40%" @close="transferDialogClosed" center>
+        <!-- 内容主体区域 -->
+        <el-form :model="transferForm" :rules="transferFormRules" ref="transferFormRef" label-width="100px" label-position="right" size="small">
+          <el-card shadow="never">
+            <el-row :gutter="24">
+              <el-col :span="18" :offset="3">
+                <el-form-item label="移交接收人" prop="userName">
+                  <el-input v-model="transferForm.userName"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="transferDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="transfer">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -467,6 +503,10 @@ export default {
         // 当前每页显示多少条数据
         pageSize: 10
       },
+      borrowForm: { datas: [], userName: '' },
+      borrowDialogVisible: false,
+      transferForm: { datas: [], userName: '' },
+      transferDialogVisible: false,
       fileURL: '载体批量导入模板.xlsx',
       actionUrl: this.$http.defaults.baseURL + 'carrier/main/importCarriers',
       editForm: {},
@@ -499,6 +539,12 @@ export default {
         ypSerial: "",
         wkState: "",
         ypSize: ""
+      },
+      borrowFormRules: {
+        userName: [{ required: true, message: '请输入借用者姓名', trigger: 'blur' }]
+      },
+      transferFormRules: {
+        userName: [{ required: true, message: '请输入移交接收人', trigger: 'blur' }]
       },
       pcmesgshow: "display:none;",
       carrierlist: [],
@@ -580,12 +626,6 @@ export default {
       }, {
         value: '转借',
         label: '转借'
-      }, {
-        value: '移交',
-        label: '移交'
-      }, {
-        value: '销毁',
-        label: '销毁'
       }],
       unitOptions: [],
       fileList: [],
@@ -672,12 +712,15 @@ export default {
       this.queryInfo.pageNum = newPage;
       this.getCarrierList();
     },
-    onSubmit () {
-      console.log('submit!');
-    },
     addDialogClosed () {
       this.$refs.addFormRef.resetFields();
       this.pcmesgshow = "display:none;";
+    },
+    borrowDialogClosed () {
+      this.$refs.borrowFormRef.resetFields();
+    },
+    transferDialogClosed () {
+      this.$refs.transferFormRef.resetFields();
     },
     resetCarrierList () {
       this.queryInfo.unit = '';
@@ -834,27 +877,74 @@ export default {
       } else if (command == "b") {
         this.downLoadCarriers(selections);
       } else if (command == "c") {
-        if (selections.length == 0) {
-          this.$message.error('请勾选需要设置停用的载体数据！')
-        } else {
-          const confirmResult = await this.$confirm(
-            `此操作将停用该载体, 是否继续?`,
-            '提示',
-            {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }
-          ).catch(err => err)
-
-          // 如果用户确认删除，则返回值为字符串 confirm
-          // 如果用户取消了删除，则返回值为字符串 cancel
-          // console.log(confirmResult)
-          if (confirmResult !== 'confirm') {
-            return this.$message.info('已取消停用！')
-          } else {
-            return this.$message.success('设置停用成功！');
+        this.stopCarriers(selections);
+      } else if (command == "d") {
+        this.borrowDialogVisible = true;
+        this.borrowForm.datas = selections;
+      } else if (command == "e") {
+        this.transferDialogVisible = true;
+        this.transferForm.datas = selections;
+      }
+    },
+    async transfer () {
+      if (this.transferForm.datas.length == 0) {
+        return this.$message.error('请勾选需要转借的载体数据！');
+      }
+      this.$refs.transferFormRef.validate(async valid => {
+        if (!valid) return
+        this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+        const { data: res } = await this.$http.post('carrier/main/transferCarrier', this.transferForm);
+        if (res.code == 500) {
+          return this.$message.error(res.msg);
+        }
+        this.$message.success('设置移交成功！');
+        this.transferDialogVisible = false;
+        this.getCarrierList();
+      })
+    },
+    async borrow () {
+      if (this.borrowForm.datas.length == 0) {
+        return this.$message.error('请勾选需要转借的载体数据！');
+      }
+      this.$refs.borrowFormRef.validate(async valid => {
+        if (!valid) return
+        this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+        const { data: res } = await this.$http.post('carrier/main/borrowCarrier', this.borrowForm);
+        if (res.code == 500) {
+          return this.$message.error(res.msg);
+        }
+        this.$message.success('设置转借成功！');
+        this.borrowDialogVisible = false;
+        this.getCarrierList();
+      })
+    },
+    async stopCarriers (selections) {
+      if (selections.length == 0) {
+        this.$message.error('请勾选需要设置停用的载体数据！')
+      } else {
+        const confirmResult = await this.$confirm(
+          `此操作将停用该载体, 是否继续?`,
+          '提示',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           }
+        ).catch(err => err)
+
+        // 如果用户确认删除，则返回值为字符串 confirm
+        // 如果用户取消了删除，则返回值为字符串 cancel
+        // console.log(confirmResult)
+        if (confirmResult !== 'confirm') {
+          return this.$message.info('已取消停用！')
+        } else {
+          this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+          const { data: res } = await this.$http.post('carrier/main/stopCarrier', selections);
+          if (res.code == 500) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success('设置停用成功！');
+          this.getCarrierList();
         }
       }
     },
@@ -884,20 +974,6 @@ export default {
           });
           console.log(error);
         });
-    },
-    downloadFile (data, filename) {
-      const link = document.createElement('a');
-      let blob = new Blob([res.data], { type: 'application/vnd.ms-excel' });
-      link.style.display = 'none';
-      link.href = URL.createObjectURL(blob);
-      let num = '';
-      for (let i = 0; i < 10; i++) {
-        num += Math.ceil(Math.random() * 10)
-      }
-      link.setAttribute('download', filename + '.xls');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link)
     },
     dateFormat (row, column, cellValue, index) {
       const daterc = row[column.property]
