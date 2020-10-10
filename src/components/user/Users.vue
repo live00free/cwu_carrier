@@ -321,7 +321,7 @@ export default {
           {
             min: 3,
             max: 16,
-            message: '账号名的长度在3~16个字符之间,',
+            message: '账号的长度在3~16个字符之间,',
             trigger: 'blur'
           }
         ],

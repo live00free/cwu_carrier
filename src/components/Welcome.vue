@@ -6,9 +6,9 @@
         <el-breadcrumb-item>总览</el-breadcrumb-item>
       </el-breadcrumb>
     </el-card>
-    <el-card>
+    <el-card :style="tuShow">
       <el-carousel :interval="4000" type="card" height="300px">
-        <el-carousel-item v-for="item in 4" :key="item">
+        <el-carousel-item v-for="item in 3" :key="item">
           <div :id="myChart(item)" :style="{width: '600px', height: '300px'}" class="myChart"></div>
         </el-carousel-item>
       </el-carousel>
@@ -46,7 +46,6 @@
                 <el-option label="在用" value="在用"></el-option>
                 <el-option label="停用" value="停用"></el-option>
                 <el-option label="转借" value="转借"></el-option>
-                <el-option label="销毁" value="销毁"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -113,23 +112,23 @@ export default {
         // 当前每页显示多少条数据
         pageSize: 10
       },
+      tuShow: "display:block;",
       total: 0,
       carrierlist: [],
       unitOptions: [],
-      addDialogVisible: false
+      addDialogVisible: false,
+      stateData: []
     }
-  },
-  mounted () {
-    this.drawLine();
   },
   created () {
     this.getCarrierList();
     this.getUserUnits();
+    this.showTu();
+    this.getStateData();
+    this.getTypeData();
+    this.getUnitData();
   },
   methods: {
-    onSubmit () {
-      console.log('submit!');
-    },
     handleCurrentChange (newPage) {
       this.queryInfo.pageNum = newPage
       this.getUserList()
@@ -142,6 +141,133 @@ export default {
       }
       this.carrierlist = res.data.datas;
       this.total = res.data.total;
+    },
+    async getStateData () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/overview/findStateData');
+      //单位数量统计
+      let myChart2 = this.$echarts.init(document.getElementById('myChart2'));
+      // 绘制图表
+      myChart2.setOption({
+        legend: {},
+        tooltip: {},
+        dataset: {
+          source: res.data
+        },
+        xAxis: { type: 'category' },
+        yAxis: {},
+        dataZoom: [
+          {
+            show: true,
+            start: 10,
+            end: 100
+          },
+          {
+            type: 'inside',
+            start: 10,
+            end: 100
+          },
+          {
+            show: true,
+            yAxisIndex: 0,
+            filterMode: 'empty',
+            width: 30,
+            height: '80%',
+            showDataShadow: false,
+            left: '93%'
+          }
+        ],
+        series: [
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' }
+        ]
+      });
+    },
+    async getTypeData () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/overview/findTypeData');
+      let myChart1 = this.$echarts.init(document.getElementById('myChart1'))
+      // 绘制图表
+      myChart1.setOption({
+        title: {
+          //   text: '载体类型数量统计',
+          //   textStyle: {
+          //     color: '#f6f2f2'
+          //   },
+          //   padding: [15, 0, 0, 250]
+        },
+        tooltip: {},
+        xAxis: {
+          type: 'category',
+          //坐标轴斜着显示
+          axisLabel: {
+            interval: 0,
+            rotate: 40
+          },
+          data: ['U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本电脑', '台式机']
+        },
+        yAxis: {},
+        series: [{
+          name: '数量',
+          type: 'bar',
+          barWidth: 20,
+          data: res.data,
+          itemStyle: {
+            normal: {
+              color: '#2f89cf',
+              opacity: 1,
+              barBorderRadius: 5
+            }
+          }
+        }]
+      });
+    },
+    async getUnitData () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/overview/findUnitData');
+      let myChart3 = this.$echarts.init(document.getElementById('myChart3'))
+      // 绘制图表
+      myChart3.setOption({
+        legend: {},
+        tooltip: {},
+        dataset: {
+          source: res.data
+        },
+        xAxis: { type: 'category' },
+        yAxis: {},
+        dataZoom: [
+          {
+            show: true,
+            start: 0,
+            end: 30
+          },
+          {
+            type: 'inside',
+            start: 0,
+            end: 30
+          },
+          {
+            show: true,
+            yAxisIndex: 0,
+            filterMode: 'empty',
+            width: 30,
+            height: '80%',
+            showDataShadow: false,
+            left: '93%'
+          }
+        ],
+        series: [
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' }
+        ]
+      });
     },
     resetCarrierList () {
       this.queryInfo.unit = '';
@@ -159,6 +285,13 @@ export default {
         return this.$message.error('获取单位列表失败！');
       }
       this.unitOptions = res.data;
+    },
+    async showTu () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/findLoginUser');
+      if (res.role == "普通用户") {
+        this.tuShow = "display:none;";
+      }
     },
     dateFormat (row, column, cellValue, index) {
       const daterc = row[column.property]
@@ -190,146 +323,6 @@ export default {
         return cellValue + "G";
       }
       return "";
-    },
-    drawLine () {
-      // 载体类型数量
-      let myChart1 = this.$echarts.init(document.getElementById('myChart1'))
-      // 绘制图表
-      myChart1.setOption({
-        title: {
-          //   text: '载体类型数量统计',
-          //   textStyle: {
-          //     color: '#f6f2f2'
-          //   },
-          //   padding: [15, 0, 0, 250]
-        },
-        tooltip: {},
-        xAxis: {
-          data: ['U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本']
-        },
-        yAxis: {},
-        series: [{
-          name: '数量',
-          type: 'bar',
-          barWidth: 20,
-          data: [500, 280, 386, 190, 107, 207, 452],
-          itemStyle: {
-            normal: {
-              color: '#2f89cf',
-              opacity: 1,
-              barBorderRadius: 5
-            }
-          }
-        }]
-      });
-
-      //单位数量统计
-      let myChart2 = this.$echarts.init(document.getElementById('myChart2'))
-      // 绘制图表
-      myChart2.setOption({
-        title: {
-          //   text: '单位载体数量统计',
-          //   textStyle: {
-          //     color: '#f6f2f2'
-          //   },
-          //   padding: [15, 0, 0, 250]
-        },
-        tooltip: {},
-        xAxis: {
-          data: ['单位1', '单位2', '单位3', '单位4', '单位5']
-        },
-        yAxis: {},
-        series: [{
-          name: '数量',
-          type: 'bar',
-          barWidth: 20,
-          data: [500, 280, 386, 190, 107],
-          itemStyle: {
-            normal: {
-              color: '#2f89cf',
-              opacity: 1,
-              barBorderRadius: 5
-            }
-          }
-        }]
-      });
-
-      //状态统计
-      let myChart3 = this.$echarts.init(document.getElementById('myChart3'))
-      // 绘制图表
-      myChart3.setOption({
-
-        title: {
-          //   text: '使用状态统计图',
-          //   textStyle: {
-          //     color: '#f6f2f2'
-          //   },
-          //   left: 'center'
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        legend: {
-          left: 'center',
-          top: 'bottom',
-          data: ['在用', '停用', '转借', '移交', '销毁']
-        },
-        series: [{
-          type: 'pie',
-          radius: '55%',
-          center: ['40%', '50%'],
-          data: [
-            { value: 10, name: '在用' },
-            { value: 5, name: '停用' },
-            { value: 15, name: '转借' },
-            { value: 25, name: '移交' },
-            { value: 20, name: '销毁' }
-          ],
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }]
-      });
-
-      //組合统计
-      let myChart4 = this.$echarts.init(document.getElementById('myChart4'))
-      // 绘制图表
-      myChart4.setOption({
-
-        title: {
-          //   text: '使用状态统计图',
-          //   textStyle: {
-          //     color: '#f6f2f2'
-          //   },
-          //   left: 'bottom'
-        },
-        legend: {},
-        tooltip: {},
-        dataset: {
-          source: [
-            ['数量', 'U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本'],
-            ['单位1', 12, 20, 25, 20, 18, 35, 16],
-            ['单位2', 22, 10, 23, 10, 10, 15, 26],
-            ['单位3', 32, 40, 15, 25, 28, 20, 36]
-          ]
-        },
-        xAxis: { type: 'category' },
-        yAxis: {},
-        series: [
-          { type: 'bar' },
-          { type: 'bar' },
-          { type: 'bar' },
-          { type: 'bar' },
-          { type: 'bar' },
-          { type: 'bar' },
-          { type: 'bar' }
-        ]
-      });
     },
     myChart (item) {
       return "myChart" + item;
