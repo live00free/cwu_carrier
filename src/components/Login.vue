@@ -6,7 +6,7 @@
     <el-main>
       <div class="login_box">
         <div class="avatar_box">
-          <img src="../assets/logo.png" alt="">
+          <img src="../assets/doc.png" alt="">
         </div>
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
           <el-form-item prop="username">
