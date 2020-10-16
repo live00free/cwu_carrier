@@ -4,7 +4,7 @@
     <el-header>
       <div>
         <img src="../assets/doc.png" alt="">
-        <span class="sys-title">涉密载体登记管理系统</span>
+        <span class="sys-title">军事科学院涉密载体管理系统</span>
       </div>
       <span class="user-title" style="margin-left:55%">欢迎登录,{{loginUserName}}</span>
       <el-button type="info" icon="el-icon-switch-button" @click="logout" circle></el-button>
@@ -188,7 +188,7 @@ export default {
 .user-title {
   font-size: 20px;
   color: #ffffff;
-  font-family: "宋体";
+  font-family: "SimSun";
   font-weight: bold;
 }
 </style>
@@ -206,5 +206,8 @@ export default {
   i {
     color: #38b2ff;
   }
+}
+body {
+  font-family: "SimSun";
 }
 </style>

@@ -34,7 +34,7 @@
             </el-form-item>
             <el-form-item label="密级">
               <el-select v-model="queryInfo.secret" placeholder="密级">
-                <el-option label="公开" value="公开"></el-option>
+                <el-option label="非密" value="非密"></el-option>
                 <el-option label="内部" value="内部"></el-option>
                 <el-option label="秘密" value="秘密"></el-option>
                 <el-option label="机密" value="机密"></el-option>
@@ -86,6 +86,8 @@
             <el-table-column prop="systemDate" label="系统安装日期" width="150" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -159,13 +161,13 @@ export default {
         dataZoom: [
           {
             show: true,
-            start: 10,
-            end: 100
+            start: 0,
+            end: 80
           },
           {
             type: 'inside',
-            start: 10,
-            end: 100
+            start: 0,
+            end: 80
           },
           {
             show: true,
@@ -347,5 +349,11 @@ export default {
 }
 .el-select--mini {
   width: 180px;
+}
+.el-button--primary {
+  height: 25px;
+  padding: 0;
+  line-height: 25px;
+  width: 120px;
 }
 </style>

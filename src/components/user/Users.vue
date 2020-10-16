@@ -240,7 +240,7 @@ export default {
         return cb()
       }
 
-      cb(new Error('请输入8位以上密码，密码中必须同时包含数字、字母'))
+      cb(new Error('密码为8位以上，密码中必须同时包含数字、字母'))
     }
 
     // 验证手机号的规则

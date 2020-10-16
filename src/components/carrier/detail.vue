@@ -14,75 +14,75 @@
             <el-card shadow="never">
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="编号">
+                  <el-form-item label="编号:">
                     <span>{{carrierDTO.number}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="使用情况">
+                  <el-form-item label="使用情况:">
                     <span>{{carrierDTO.useState}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="载体类型">
+                  <el-form-item label="载体类型:">
                     <span>{{carrierDTO.carrierType}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="密级">
+                  <el-form-item label="密级:">
                     <span>{{carrierDTO.secret}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="单位">
+                  <el-form-item label="单位:">
                     <span>{{carrierDTO.unit}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="部门">
+                  <el-form-item label="部门:">
                     <span>{{carrierDTO.department}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="用途">
+                  <el-form-item label="用途:">
                     <span>{{carrierDTO.useFor}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="领用日期">
+                  <el-form-item label="领用日期:">
                     <span>{{spanDateFormater(carrierDTO.useDate)}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="品牌型号">
+                  <el-form-item label="品牌型号:">
                     <span>{{carrierDTO.product}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="产品序列号">
+                  <el-form-item label="产品序列号:">
                     <span>{{carrierDTO.proSerial}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="容量">
+                  <el-form-item label="容量:">
                     <span>{{carrierDTO.size}}G</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="颜色">
+                  <el-form-item label="颜色:">
                     <span>{{carrierDTO.proColor}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="领用人" prop="fullName">
+                  <el-form-item label="领用人:" prop="fullName">
                     <span>{{carrierDTO.fullName}}</span>
                   </el-form-item>
                 </el-col>
@@ -93,36 +93,36 @@
             <el-card shadow="never" :style="pcmesgshow">
               <el-row :gutter="24">
                 <el-col :span="12">
-                  <el-form-item label="光驱">
+                  <el-form-item label="光驱:">
                     <span>{{carrierDTO.gqState}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="无线网卡">
+                  <el-form-item label="无线网卡:">
                     <span>{{carrierDTO.wkState}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="12">
-                  <el-form-item label="操作系统版本">
+                  <el-form-item label="操作系统版本:">
                     <span>{{carrierDTO.systemVersion}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="系统安装日期">
+                  <el-form-item label="系统安装日期:">
                     <span>{{spanDateFormater(carrierDTO.systemDate)}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="12">
-                  <el-form-item label="硬盘序列号">
+                  <el-form-item label="硬盘序列号:">
                     <span>{{carrierDTO.ypSerial}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="硬盘容量">
+                  <el-form-item label="硬盘容量:">
                     <span>{{carrierDTO.ypSize}}G</span>
                   </el-form-item>
                 </el-col>
@@ -161,6 +161,8 @@
             <el-table-column prop="systemDate" label="系统安装日期" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
           </el-table>
         </el-col>
       </el-row>
