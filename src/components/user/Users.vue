@@ -265,16 +265,7 @@ export default {
         pageSize: 8
       },
       unitOptions: [],
-      roleOptions: [{
-        value: '总负责人',
-        label: '总负责人'
-      }, {
-        value: '单位负责人',
-        label: '单位负责人'
-      }, {
-        value: '普通用户',
-        label: '普通用户'
-      }],
+      roleOptions: [],
       options: [{
         value: '非密人员',
         label: '非密人员'
@@ -398,8 +389,35 @@ export default {
     this.getUserList();
     this.getUserUnits();
     this.getUserLimit();
+    this.setRoleList();
   },
   methods: {
+    async setRoleList () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/findLoginUser');
+      const loginUserName = res.userName;
+      console.info(loginUserName);
+      if (loginUserName && loginUserName === 'Administrator') {
+        this.roleOptions = [{
+          value: '院管理员',
+          label: '院管理员'
+        }, {
+          value: '单位管理员',
+          label: '单位管理员'
+        }, {
+          value: '普通用户',
+          label: '普通用户'
+        }];
+      } else {
+        this.roleOptions = [{
+          value: '单位管理员',
+          label: '单位管理员'
+        }, {
+          value: '普通用户',
+          label: '普通用户'
+        }];
+      }
+    },
     async getUserList () {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
       const { data: res } = await this.$http.post('carrier/user/findAll', this.queryInfo)

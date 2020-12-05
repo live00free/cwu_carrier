@@ -30,6 +30,10 @@
                 <el-option label="磁带" value="磁带"></el-option>
                 <el-option label="笔记本电脑" value="笔记本电脑"></el-option>
                 <el-option label="台式机" value="台式机"></el-option>
+                <el-option label="照相机" value="照相机"></el-option>
+                <el-option label="录音笔" value="录音笔"></el-option>
+                <el-option label="打印机" value="打印机"></el-option>
+                <el-option label="复印机" value="复印机"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="密级">
@@ -45,7 +49,7 @@
               <el-select v-model="queryInfo.useState" placeholder="使用情况">
                 <el-option label="在用" value="在用"></el-option>
                 <el-option label="停用" value="停用"></el-option>
-                <el-option label="转借" value="转借"></el-option>
+                <!-- <el-option label="转借" value="转借"></el-option> -->
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -62,30 +66,27 @@
           <el-table :data="carrierlist" :header-cell-style="{background:'#d3e0def5',color:'#303133'}" style="width: 100%;height: 100%" border :highlight-current-row=true :row-style="{height:'50px'}" :cell-style="{padding:'0'}">
             <el-table-column prop="carrierId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center">
+            <el-table-column prop="number" label="保密编号" fixed width="150" header-align="center" align="center">
               <template slot-scope='scope'>
                 <router-link v-bind:to="{path:'/home/detail',query:{carrierId:scope.row.carrierId,page:'welcome'}}">{{scope.row.number}}</router-link>
               </template>
             </el-table-column>
             <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="fullName" label="领用人" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useName" label="使用人" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="fullName" label="责任人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="unit" label="单位" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useFor" label="用途" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useFor" label="位置" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useDate" label="领用日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="proSerial" label="产品序列号" width="250" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="size" label="容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="proColor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemDate" label="系统安装日期" width="150" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="networkSate" label="入网情况" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
           </el-table>
@@ -181,8 +182,8 @@ export default {
         ],
         series: [
           { type: 'bar' },
-          { type: 'bar' },
           { type: 'bar' }
+          //   { type: 'bar' }
         ]
       });
     },
@@ -207,7 +208,7 @@ export default {
             interval: 0,
             rotate: 40
           },
-          data: ['U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本电脑', '台式机']
+          data: ['U盘', '移动硬盘', '光盘', '软盘', '闪存盘', '磁带', '笔记本电脑', '台式机', '照相机', '录音笔', '打印机', '复印机']
         },
         yAxis: {},
         series: [{
@@ -260,6 +261,10 @@ export default {
           }
         ],
         series: [
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
+          { type: 'bar' },
           { type: 'bar' },
           { type: 'bar' },
           { type: 'bar' },

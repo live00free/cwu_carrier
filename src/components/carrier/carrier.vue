@@ -14,7 +14,7 @@
               <el-select v-model="queryInfo.useState" placeholder="使用情况">
                 <el-option label="在用" value="在用"></el-option>
                 <el-option label="停用" value="停用"></el-option>
-                <el-option label="转借" value="转借"></el-option>
+                <!-- <el-option label="转借" value="转借"></el-option> -->
               </el-select>
             </el-form-item>
             <el-form-item label="载体类型">
@@ -27,6 +27,10 @@
                 <el-option label="磁带" value="磁带"></el-option>
                 <el-option label="笔记本电脑" value="笔记本电脑"></el-option>
                 <el-option label="台式机" value="台式机"></el-option>
+                <el-option label="照相机" value="照相机"></el-option>
+                <el-option label="录音笔" value="录音笔"></el-option>
+                <el-option label="打印机" value="打印机"></el-option>
+                <el-option label="复印机" value="复印机"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="密级">
@@ -38,8 +42,8 @@
                 <el-option label="绝密" value="绝密"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="领用人">
-              <el-input v-model="queryInfo.fullName" placeholder="领用人"></el-input>
+            <el-form-item label="责任人">
+              <el-input v-model="queryInfo.fullName" placeholder="责任人"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getCarrierList" plain icon="el-icon-search">查询</el-button>
@@ -54,8 +58,8 @@
       <el-row style="margin-bottom:5px">
         <el-col :span="10" :offset="14">
           <el-button type="primary" plain @click="addDialogVisible = true" icon="el-icon-circle-plus">新建</el-button>
-          <el-button type="primary" plain icon="el-icon-edit" @click="editCarrierWd">修改</el-button>
-          <el-button type="primary" plain icon="el-icon-delete" @click="deleteCarrier">删除</el-button>
+          <el-button type="primary" plain icon="el-icon-edit" @click="editCarrierWd" :disabled="limit.updateCarrier">修改</el-button>
+          <el-button type="primary" plain icon="el-icon-delete" @click="deleteCarrier" :disabled="limit.deleteCarrier">删除</el-button>
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
               更多操作<i class="el-icon-arrow-down el-icon--right"></i>
@@ -64,7 +68,7 @@
               <el-dropdown-item icon="el-icon-upload2" command="a">批量导入</el-dropdown-item>
               <el-dropdown-item icon="el-icon-download" command="b">批量导出</el-dropdown-item>
               <el-dropdown-item icon="el-icon-video-pause" command="c">停用</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-share" command="d">转借</el-dropdown-item>
+              <!-- <el-dropdown-item icon="el-icon-share" command="d">转借</el-dropdown-item> -->
               <el-dropdown-item icon="el-icon-right" command="e">移交</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -76,30 +80,27 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="carrierId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center">
+            <el-table-column prop="number" label="保密编号" fixed width="150" header-align="center" align="center">
               <template slot-scope='scope'>
                 <router-link v-bind:to="{path:'/home/detail',query:{carrierId:scope.row.carrierId,page:'carrier'}}">{{scope.row.number}}</router-link>
               </template>
             </el-table-column>
             <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="fullName" label="领用人" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useName" label="使用人" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="fullName" label="责任人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="unit" label="单位" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useFor" label="用途" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useFor" label="位置" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useDate" label="领用日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="proSerial" label="产品序列号" width="250" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="size" label="容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="proColor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemDate" label="系统安装日期" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="networkSate" label="入网情况" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
           </el-table>
@@ -115,8 +116,8 @@
           <el-card shadow="never">
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="编号" prop="number">
-                  <el-input placeholder="自动生成" v-model="addForm.number" :disabled="true">
+                <el-form-item label="保密编号" prop="number">
+                  <el-input v-model="addForm.number">
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -162,7 +163,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="用途" prop="useFor">
+                <el-form-item label="位置" prop="useFor">
                   <el-input v-model="addForm.useFor"></el-input>
                 </el-form-item>
               </el-col>
@@ -186,19 +187,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="容量" prop="size">
-                  <el-input v-model="addForm.size"><template slot="append">G</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10" :offset="1">
-                <el-form-item label="颜色" prop="proColor">
-                  <el-input v-model="addForm.proColor"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="10" :offset="1">
-                <el-form-item label="领用人" prop="fullName">
+                <el-form-item label="责任人" prop="fullName">
                   <el-input v-model="addForm.fullName"></el-input>
                 </el-form-item>
               </el-col>
@@ -242,8 +231,10 @@
                 </el-form-item>
               </el-col>
               <el-col :span="10" :offset="1">
-                <el-form-item label="硬盘容量" prop="ypSize">
-                  <el-input v-model="addForm.ypSize"><template slot="append">G</template></el-input>
+                <el-form-item label="入网情况" prop="networkSate">
+                  <el-select v-model="addForm.networkSate" placeholder="请选择">
+                    <el-option v-for="item in networkSateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -262,8 +253,8 @@
           <el-card shadow="never">
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="编号" prop="number">
-                  <el-input placeholder="自动生成" v-model="editForm.number" :disabled="true">
+                <el-form-item label="保密编号" prop="number">
+                  <el-input v-model="editForm.number">
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -309,7 +300,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="用途" prop="useFor">
+                <el-form-item label="位置" prop="useFor">
                   <el-input v-model="editForm.useFor"></el-input>
                 </el-form-item>
               </el-col>
@@ -333,19 +324,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="10" :offset="1">
-                <el-form-item label="容量" prop="size">
-                  <el-input v-model="editForm.size"><template slot="append">G</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10" :offset="1">
-                <el-form-item label="颜色" prop="proColor">
-                  <el-input v-model="editForm.proColor"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="10" :offset="1">
-                <el-form-item label="领用人" prop="fullName">
+                <el-form-item label="责任人" prop="fullName">
                   <el-input v-model="editForm.fullName"></el-input>
                 </el-form-item>
               </el-col>
@@ -389,8 +368,10 @@
                 </el-form-item>
               </el-col>
               <el-col :span="10" :offset="1">
-                <el-form-item label="硬盘容量" prop="ypSize">
-                  <el-input v-model="editForm.ypSize"><template slot="append">G</template></el-input>
+                <el-form-item label="入网情况" prop="networkSate">
+                  <el-select v-model="editForm.networkSate" placeholder="请选择">
+                    <el-option v-for="item in networkSateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -484,14 +465,6 @@
 <script type="text/javascript">
 export default {
   data () {
-    var checkSize = (rule, value, cb) => {
-      // 验证容量的正则表达式
-      const regSize = /^\d+$/
-      if (regSize.test(value)) {
-        return cb()
-      }
-      cb(new Error('容量为数字'))
-    }
     return {
       queryInfo: {
         unit: '',
@@ -510,15 +483,11 @@ export default {
       transferForm: { datas: [], userName: '' },
       transferDialogVisible: false,
       fileURL: '载体批量导入模板.xlsx',
-      actionUrl: this.$http.defaults.baseURL + 'carrier/main/importCarriers',
+      actionUrl: this.$http.defaults.baseURL + '/carrier/main/importCarriers',
       editForm: {},
       total: 0,
       unitData: [],
       addFormRules: {
-        size: [
-          { required: true, message: '请输入容量', trigger: 'blur' },
-          { validator: checkSize, trigger: 'blur' }
-        ],
         carrierType: [
           { required: true, message: '请选择载体类型', trigger: 'blur' },
         ],
@@ -529,7 +498,7 @@ export default {
           { required: true, message: '请选择使用情况', trigger: 'blur' },
         ],
         fullName: [
-          { required: true, message: '请输入领用人', trigger: 'blur' },
+          { required: true, message: '请输入责任人', trigger: 'blur' },
         ],
         unit: [
           { required: true, message: '请选择单位', trigger: 'blur' },
@@ -568,15 +537,13 @@ export default {
         useDate: '',
         product: '',
         proSerial: '',
-        size: '',
         useState: '',
-        proColor: '',
         gqState: '',
         wkState: '',
         systemVersion: '',
         systemDate: '',
         ypSerial: '',
-        ypSize: ''
+        networkSate: ''
       },
       carriertypeoptions: [{
         value: 'U盘',
@@ -602,7 +569,20 @@ export default {
       }, {
         value: '台式机',
         label: '台式机'
-      }],
+      }, {
+        value: '照相机',
+        label: '照相机'
+      }, {
+        value: '录音笔',
+        label: '录音笔'
+      }, {
+        value: '打印机',
+        label: '打印机'
+      }, {
+        value: '复印机',
+        label: '复印机'
+      }
+      ],
       options: [{
         value: '非密',
         label: '非密'
@@ -625,18 +605,31 @@ export default {
       }, {
         value: '停用',
         label: '停用'
-      }, {
-        value: '转借',
-        label: '转借'
       }],
+      networkSateOptions: [{
+        value: '单机',
+        label: '单机'
+      }, {
+        value: '联军网',
+        label: '联军网'
+      }, {
+        value: '联内网',
+        label: '联内网'
+      }, {
+        value: '联互联网',
+        label: '联互联网'
+      }
+      ],
       unitOptions: [],
       fileList: [],
+      limit: { updateCarrier: false, deleteCarrier: false },
       myHeaders: { Authorization: window.sessionStorage.getItem('token') }
     }
   },
   created () {
     this.getCarrierList();
     this.getUserUnits();
+    this.getUserLimit();
   },
   methods: {
     async getCarrierList () {
@@ -647,6 +640,14 @@ export default {
       }
       this.carrierlist = res.data.datas;
       this.total = res.data.total;
+    },
+    async getUserLimit () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/user/userLimit')
+      if (res.code !== 200) {
+        return this.$message.error('获取用户列表失败！');
+      }
+      this.limit = res.data;
     },
     selectDepartmentClosed () {
 
@@ -759,20 +760,8 @@ export default {
       })
     },
     elcardStyle () {
-      var checkSize = (rule, value, cb) => {
-        // 验证容量的正则表达式
-        const regSize = /^\d+$/
-        if (regSize.test(value)) {
-          return cb()
-        }
-        cb(new Error('容量为数字'))
-      }
       if (this.addForm.carrierType && (this.addForm.carrierType == "笔记本电脑" || this.addForm.carrierType == "台式机")) {
         this.pcmesgshow = "display:block;";
-        this.addFormRules.ypSize = [
-          { required: true, message: '请输入硬盘容量', trigger: 'blur' },
-          { validator: checkSize, trigger: 'blur' }
-        ];
         this.addFormRules.gqState = [
           { required: true, message: '请选择光驱情况', trigger: 'blur' },
         ];
@@ -832,10 +821,6 @@ export default {
         this.editDialogVisible = true;
         if (this.editForm.carrierType && (this.editForm.carrierType == "笔记本电脑" || this.editForm.carrierType == "台式机")) {
           this.pcmesgshow = "display:block;";
-          this.addFormRules.ypSize = [
-            { required: true, message: '请输入硬盘容量', trigger: 'blur' },
-            { validator: checkSize, trigger: 'blur' }
-          ];
           this.addFormRules.gqState = [
             { required: true, message: '请选择光驱情况', trigger: 'blur' },
           ];
@@ -890,7 +875,7 @@ export default {
     },
     async transfer () {
       if (this.transferForm.datas.length == 0) {
-        return this.$message.error('请勾选需要转借的载体数据！');
+        return this.$message.error('请勾选需要移交的载体数据！');
       }
       this.$refs.transferFormRef.validate(async valid => {
         if (!valid) return

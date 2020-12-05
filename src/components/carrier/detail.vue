@@ -8,13 +8,13 @@
       <el-divider content-position="left">
         <el-tag type="success">{{carrierDTO.number}}详细信息</el-tag>
       </el-divider>
-      <el-form :model="carrierDTO" label-width="100px" label-position="right" size="mini">
+      <el-form :model="carrierDTO" label-width="110px" label-position="right" size="mini">
         <el-row :gutter="24">
           <el-col :span="16">
             <el-card shadow="never">
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="编号:">
+                  <el-form-item label="保密编号:">
                     <span>{{carrierDTO.number}}</span>
                   </el-form-item>
                 </el-col>
@@ -48,7 +48,7 @@
               </el-row>
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <el-form-item label="用途:">
+                  <el-form-item label="位置:">
                     <span>{{carrierDTO.useFor}}</span>
                   </el-form-item>
                 </el-col>
@@ -70,60 +70,42 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="容量:">
-                    <span>{{carrierDTO.size}}G</span>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="颜色:">
-                    <span>{{carrierDTO.proColor}}</span>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row :gutter="24">
-                <el-col :span="8">
-                  <el-form-item label="领用人:" prop="fullName">
+                  <el-form-item label="责任人:" prop="fullName">
                     <span>{{carrierDTO.fullName}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="never" :style="pcmesgshow">
-              <el-row :gutter="24">
-                <el-col :span="12">
+              <el-row :gutter="24" :style="pcmesgshow">
+                <el-col :span="8">
                   <el-form-item label="光驱:">
                     <span>{{carrierDTO.gqState}}</span>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="8">
                   <el-form-item label="无线网卡:">
                     <span>{{carrierDTO.wkState}}</span>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="24">
-                <el-col :span="12">
+                <el-col :span="8">
                   <el-form-item label="操作系统版本:">
                     <span>{{carrierDTO.systemVersion}}</span>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+              </el-row>
+              <el-row :gutter="24" :style="pcmesgshow">
+                <el-col :span="8">
                   <el-form-item label="系统安装日期:">
                     <span>{{spanDateFormater(carrierDTO.systemDate)}}</span>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row :gutter="24">
-                <el-col :span="12">
+                <el-col :span="8">
                   <el-form-item label="硬盘序列号:">
                     <span>{{carrierDTO.ypSerial}}</span>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
-                  <el-form-item label="硬盘容量:">
-                    <span>{{carrierDTO.ypSize}}G</span>
+                <el-col :span="8">
+                  <el-form-item label="入网情况:">
+                    <span>{{carrierDTO.networkSate}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -141,26 +123,23 @@
             <el-table-column prop="serial" label="序号" fixed width="50" header-align="center" align="center"></el-table-column>
             <el-table-column prop="updateUserName" label="修改者" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="updateTime" label="修改时间" fixed width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="number" label="编号" fixed width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="number" label="保密编号" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="fullName" label="领用人" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useName" label="使用人" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="fullName" label="责任人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="unit" label="单位" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useFor" label="用途" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useFor" label="位置" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useDate" label="领用日期" width="160" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="proSerial" label="产品序列号" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="size" label="容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="proColor" label="颜色" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemDate" label="系统安装日期" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="ypSize" label="硬盘容量" width="150" :formatter="sizeFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="networkSate" label="入网情况" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
           </el-table>
@@ -251,15 +230,9 @@ export default {
         const hh = dateMat.getHours();
         const mm = dateMat.getMinutes();
         const ss = dateMat.getSeconds();
-        const timeFormat = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+        const timeFormat = year + "-" + month + "-" + day;
         return timeFormat;
       }
-    },
-    sizeFormater (row, column, cellValue, index) {
-      if (cellValue) {
-        return cellValue + "G";
-      }
-      return "";
     }
   }
 }
