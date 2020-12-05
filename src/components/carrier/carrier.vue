@@ -8,7 +8,7 @@
     </el-card>
     <el-card shadow="never">
       <el-form :inline="true" :model="queryInfo" class="demo-form-inline" size="mini" ref="selectFormRef">
-        <el-row>
+        <el-row :gutter="24">
           <el-col :span="24">
             <el-form-item label="使用情况">
               <el-select v-model="queryInfo.useState" placeholder="使用情况">
@@ -55,8 +55,8 @@
         </el-row>
       </el-form>
       <el-divider class="el-divider--horizontal2"></el-divider>
-      <el-row style="margin-bottom:5px">
-        <el-col :span="10" :offset="14">
+      <el-row style="margin-bottom:5px" :gutter="24">
+        <el-col :span="12" :offset="12">
           <el-button type="primary" plain @click="addDialogVisible = true" icon="el-icon-circle-plus">新建</el-button>
           <el-button type="primary" plain icon="el-icon-edit" @click="editCarrierWd" :disabled="limit.updateCarrier">修改</el-button>
           <el-button type="primary" plain icon="el-icon-delete" @click="deleteCarrier" :disabled="limit.deleteCarrier">删除</el-button>

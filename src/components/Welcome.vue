@@ -14,10 +14,10 @@
       </el-carousel>
     </el-card>
     <el-card>
-      <el-row>
+      <el-row :gutter="24">
         <el-col :span="24">
           <el-form :inline="true" :model="queryInfo" class="demo-form-inline" size="mini">
-            <el-form-item label="领用人" style="margin-left: 30px;">
+            <el-form-item label="领用人" style="margin-left: 10px;">
               <el-input v-model="queryInfo.fullName" placeholder="领用人"></el-input>
             </el-form-item>
             <el-form-item label="载体类型">
