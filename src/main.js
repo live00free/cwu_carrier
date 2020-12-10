@@ -7,7 +7,7 @@ import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
 // 配置请求的跟路径
-axios.defaults.baseURL = window.location.protocol + "//" + window.location.hostname + ":9527"
+axios.defaults.baseURL = window.location.protocol + "//" + window.location.hostname + ":1234"
 
 axios.interceptors.response.use(
     response => {

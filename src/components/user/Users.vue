@@ -23,9 +23,9 @@
           <el-table-column prop="userId" label="ID" v-if="false" header-align="center" align="center"></el-table-column>
           <el-table-column prop="fullName" label="姓名" min-width="10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="userName" label="账号" min-width="10%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="secret" label="密级" min-width="10%" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="secret" label="人员类别" min-width="10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="unit" label="单位" min-width="12.5%" header-align="center" align="center"></el-table-column>
-          <el-table-column prop="department" label="部门" min-width="12.5%" header-align="center" align="center"></el-table-column>
+          <!-- <el-table-column prop="department" label="部门" min-width="12.5%" header-align="center" align="center"></el-table-column> -->
           <el-table-column prop="telephone" label="电话" min-width="10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="mobilePhone" label="手机号" min-width="10%" header-align="center" align="center"></el-table-column>
           <el-table-column prop="role" label="角色" min-width="10%" header-align="center" align="center"></el-table-column>
@@ -43,11 +43,11 @@
       </el-row>
       <!-- 修改用户的对话框 -->
       <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="40%" @close="editDialogClosed" center>
-        <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px" label-position="right" size="small">
+        <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px" label-position="right" size="mini">
           <el-card shadow="never">
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
-                <el-form-item label="用户名" prop="fullName">
+                <el-form-item label="姓名" prop="fullName">
                   <el-input v-model="editForm.fullName" :disabled="limit.updateUser"></el-input>
                 </el-form-item>
               </el-col>
@@ -68,7 +68,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
-                <el-form-item label="密级" prop="secret">
+                <el-form-item label="人员类别" prop="secret">
                   <el-select v-model="editForm.secret" placeholder="请选择" :disabled="limit.updateUser">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                   </el-select>
@@ -78,18 +78,11 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="单位" prop="unit">
-                  <el-select v-model="editForm.unit" placeholder="请选择" :disabled="limit.updateUser">
-                    <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  <el-select v-model="editForm.unit" placeholder="请选择单位" style="width: 180px" ref="selectReport">
+                    <el-option :value="editForm.unit" :label="editForm.unit" style="width: 180px;height:200px;overflow: auto;background-color:#fff">
+                      <el-tree :data="unitData" @node-click="handleNodeClick"></el-tree>
+                    </el-option>
                   </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="18" :offset="3">
-                <el-form-item label="部门" prop="department">
-                  <el-input v-model="editForm.department" :disabled="limit.updateUser">
-                    <el-button slot="append" icon="el-icon-s-home" @click="openSelectDpedit" :disabled="limit.updateUser"></el-button>
-                  </el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -127,11 +120,11 @@
       <!-- 添加用户的对话框 -->
       <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="40%" @close="addDialogClosed" center>
         <!-- 内容主体区域 -->
-        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="small">
+        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="mini">
           <el-card shadow="never">
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
-                <el-form-item label="用户名" prop="fullName">
+                <el-form-item label="姓名" prop="fullName">
                   <el-input v-model="addForm.fullName"></el-input>
                 </el-form-item>
               </el-col>
@@ -152,7 +145,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
-                <el-form-item label="密级" prop="secret">
+                <el-form-item label="人员类别" prop="secret">
                   <el-select v-model="addForm.secret" placeholder="请选择">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                   </el-select>
@@ -162,18 +155,11 @@
             <el-row :gutter="24">
               <el-col :span="18" :offset="3">
                 <el-form-item label="单位" prop="unit">
-                  <el-select v-model="addForm.unit" placeholder="请选择">
-                    <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  <el-select v-model="addForm.unit" placeholder="请选择单位" style="width: 180px" ref="selectReport">
+                    <el-option :value="addForm.unit" :label="addForm.unit" style="width: 180px;height:200px;overflow: auto;background-color:#fff">
+                      <el-tree :data="unitData" @node-click="handleAddNodeClick"></el-tree>
+                    </el-option>
                   </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="18" :offset="3">
-                <el-form-item label="部门" prop="department">
-                  <el-input v-model="addForm.department">
-                    <el-button slot="append" icon="el-icon-s-home" @click="openSelectDp"></el-button>
-                  </el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -209,22 +195,6 @@
         </span>
       </el-dialog>
 
-      <!-- 选择部门的对话框 -->
-      <el-dialog title="选择部门" :visible.sync="selectDepartmentDV" width="40%" @close="selectDepartmentClosed" center>
-        <!-- 内容主体区域 -->
-        <el-card shadow="never">
-          <el-tree :data="unitData" default-expand-all node-key="id" show-checkbox :check-on-click-node="true" ref="selectTree" :highlight-current="true">
-            <span class="custom-tree-node" slot-scope="{ node}">
-              <span>{{ node.label }}</span>
-            </span>
-          </el-tree>
-        </el-card>
-        <!-- 底部区域 -->
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="selectDPClosed">取 消</el-button>
-          <el-button type="primary" @click="selectDP">确 定</el-button>
-        </span>
-      </el-dialog>
     </el-card>
 
   </div>
@@ -264,7 +234,6 @@ export default {
         // 当前每页显示多少条数据
         pageSize: 8
       },
-      unitOptions: [],
       roleOptions: [],
       options: [{
         value: '非密人员',
@@ -299,11 +268,11 @@ export default {
       // 添加表单的验证规则对象
       addFormRules: {
         fullName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
           {
-            min: 3,
+            min: 2,
             max: 16,
-            message: '用户名的长度在3~16个字符之间',
+            message: '姓名的长度在3~16个字符之间',
             trigger: 'blur'
           }
         ],
@@ -321,13 +290,10 @@ export default {
           { validator: checkPassword, trigger: 'blur' }
         ],
         secret: [
-          { required: true, message: '请选择密级', trigger: 'blur' }
+          { required: true, message: '请选择人员类别', trigger: 'blur' }
         ],
         unit: [
           { required: true, message: '请选择单位', trigger: 'blur' }
-        ],
-        department: [
-          { required: true, message: '请选择部门', trigger: 'blur' }
         ],
         role: [
           { required: true, message: '请选择角色', trigger: 'blur' }
@@ -335,11 +301,11 @@ export default {
       },
       editFormRules: {
         fullName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
           {
-            min: 3,
+            min: 2,
             max: 16,
-            message: '用户名的长度在3~16个字符之间',
+            message: '姓名的长度在2~16个字符之间',
             trigger: 'blur'
           }
         ],
@@ -356,13 +322,10 @@ export default {
           { validator: checkPassword, trigger: 'blur' }
         ],
         secret: [
-          { required: true, message: '请选择密级', trigger: 'blur' }
+          { required: true, message: '请选择人员类别', trigger: 'blur' }
         ],
         unit: [
           { required: true, message: '请选择单位', trigger: 'blur' }
-        ],
-        department: [
-          { required: true, message: '请选择部门', trigger: 'blur' }
         ],
         role: [
           { required: true, message: '请选择角色', trigger: 'blur' }
@@ -374,24 +337,37 @@ export default {
       editForm: {},
       // 控制分配角色对话框的显示与隐藏
       setRoleDialogVisible: false,
-      selectDepartmentDV: false,
       // 需要被分配角色的用户信息
       userInfo: {},
       // 所有角色的数据列表
       rolesList: [],
       // 已选中的角色Id值
       selectedRoleId: '',
-      selectdp: '',
       unitData: []
     }
   },
   created () {
     this.getUserList();
-    this.getUserUnits();
     this.getUserLimit();
     this.setRoleList();
+    this.getUnitList();
   },
   methods: {
+    async getUnitList () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/unit/findAll');
+      if (res.code == 200) {
+        this.unitData = JSON.parse(JSON.stringify(res.data))
+      }
+    },
+    handleAddNodeClick (node) {
+      this.addForm.unit = node.label;
+      this.$refs.selectReport.blur();
+    },
+    handleNodeClick (node) {
+      this.editForm.unit = node.label;
+      this.$refs.selectReport.blur();
+    },
     async setRoleList () {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
       const { data: res } = await this.$http.get('carrier/user/findLoginUser');
@@ -399,19 +375,31 @@ export default {
       console.info(loginUserName);
       if (loginUserName && loginUserName === 'Administrator') {
         this.roleOptions = [{
-          value: '院管理员',
-          label: '院管理员'
+          value: '一级管理员',
+          label: '一级管理员'
         }, {
-          value: '单位管理员',
-          label: '单位管理员'
+          value: '二级级管理员',
+          label: '二级级管理员'
+        }, {
+          value: '三级管理员',
+          label: '三级管理员'
+        }, {
+          value: '四级管理员',
+          label: '四级管理员'
         }, {
           value: '普通用户',
           label: '普通用户'
         }];
       } else {
         this.roleOptions = [{
-          value: '单位管理员',
-          label: '单位管理员'
+          value: '二级级管理员',
+          label: '二级级管理员'
+        }, {
+          value: '三级管理员',
+          label: '三级管理员'
+        }, {
+          value: '四级管理员',
+          label: '四级管理员'
         }, {
           value: '普通用户',
           label: '普通用户'
@@ -431,30 +419,9 @@ export default {
       this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
       const { data: res } = await this.$http.get('carrier/user/userLimit')
       if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！');
+        return this.$message.error('获取用户列表失败');
       }
       this.limit = res.data;
-    },
-    async getDepartMents () {
-      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
-      let seunit = '';
-      if (this.selectdp == 'add') {
-        seunit = this.addForm.unit;
-      } else {
-        seunit = this.editForm.unit;
-      }
-      const { data: res } = await this.$http.get('carrier/unit/findAllDepartments?unit=' + seunit);
-      if (res.code == 200) {
-        this.unitData = JSON.parse(JSON.stringify(res.data))
-      }
-    },
-    async getUserUnits () {
-      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
-      const { data: res } = await this.$http.get('carrier/unit/findAllUnits')
-      if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！');
-      }
-      this.unitOptions = res.data;
     },
     // 监听 页码值 改变的事件
     handleCurrentChange (newPage) {
@@ -467,44 +434,6 @@ export default {
     },
     selectDepartmentClosed () {
 
-    },
-    selectDPClosed () {
-      this.selectDepartmentDV = false;
-    },
-    openSelectDp () {
-      if (this.addForm.unit == '') {
-        return this.$message.error("请先选择单位！");
-      }
-      this.selectdp = 'add';
-      this.selectDepartmentDV = true;
-      this.getDepartMents();
-    },
-    openSelectDpedit () {
-      if (this.editForm.unit == '') {
-        return this.$message.error("请先选择单位！");
-      }
-      this.selectdp = 'edit';
-      this.selectDepartmentDV = true;
-      this.getDepartMents();
-    },
-    selectDP () {
-      let node = this.$refs.selectTree.getCheckedNodes();
-      let departs = [];
-      node.forEach(item => {
-        if (!item.isUnit) {
-          departs.push(item);
-        }
-      });
-      if (node.departs > 1) {
-        return this.$message.warning("不允许选择多个部门");
-      }
-      let depart = departs[0].label;
-      if (this.selectdp == 'add') {
-        this.addForm.department = depart;
-      } else {
-        this.editForm.department = depart;
-      }
-      this.selectDepartmentDV = false;
     },
     // 点击按钮，添加新用户
     addUser () {
@@ -569,9 +498,6 @@ export default {
         }
       ).catch(err => err)
 
-      // 如果用户确认删除，则返回值为字符串 confirm
-      // 如果用户取消了删除，则返回值为字符串 cancel
-      // console.log(confirmResult)
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }

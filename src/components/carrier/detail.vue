@@ -24,7 +24,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="载体类型:">
+                  <el-form-item label="设备类型:">
                     <span>{{carrierDTO.carrierType}}</span>
                   </el-form-item>
                 </el-col>
@@ -53,7 +53,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="领用日期:">
+                  <el-form-item label="购买日期:">
                     <span>{{spanDateFormater(carrierDTO.useDate)}}</span>
                   </el-form-item>
                 </el-col>
@@ -72,6 +72,11 @@
                 <el-col :span="8">
                   <el-form-item label="责任人:" prop="fullName">
                     <span>{{carrierDTO.fullName}}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="注册日期:" prop="zhuceDate">
+                    <span>{{carrierDTO.zhuceDate}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -94,18 +99,43 @@
               </el-row>
               <el-row :gutter="24" :style="pcmesgshow">
                 <el-col :span="8">
-                  <el-form-item label="系统安装日期:">
-                    <span>{{spanDateFormater(carrierDTO.systemDate)}}</span>
+                  <el-form-item label="蓝牙:">
+                    <span>{{carrierDTO.lanYa}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="硬盘序列号:">
-                    <span>{{carrierDTO.ypSerial}}</span>
+                  <el-form-item label="红外:">
+                    <span>{{carrierDTO.hongWai}}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="入网情况:">
                     <span>{{carrierDTO.networkSate}}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="24" :style="pcmesgshow">
+                <el-col :span="8">
+                  <el-form-item label="操作系统安装日期:" label-width="140px">
+                    <span>{{spanDateFormater(carrierDTO.systemDate)}}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="保密系统安装日期:" label-width="140px">
+                    <span>{{spanDateFormater(carrierDTO.bmSysDate)}}</span>
+                  </el-form-item>
+                </el-col>
+
+              </el-row>
+              <el-row :gutter="24" :style="pcmesgshow">
+                <el-col :span="12">
+                  <el-form-item label="MAC地址:">
+                    <span>{{carrierDTO.macAddress}}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="硬盘序列号:">
+                    <span>{{carrierDTO.ypSerial}}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -124,24 +154,29 @@
             <el-table-column prop="updateUserName" label="修改者" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="updateTime" label="修改时间" fixed width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
             <el-table-column prop="number" label="保密编号" fixed width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="carrierType" label="载体类型" fixed width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="carrierType" label="设备类型" fixed width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="fullName" label="责任人" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="unit" label="单位" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="department" label="部门" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="secret" label="密级" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useFor" label="位置" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="useDate" label="领用日期" width="160" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="useDate" label="购买日期" width="160" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="zhuceDate" label="注册日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="product" label="品牌型号" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="proSerial" label="产品序列号" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="useState" label="使用情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="gqState" label="光驱情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="wkState" label="无线网卡情况" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="lanYa" label="蓝牙情况" width="150" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="hongWai" label="红外情况" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="systemVersion" label="操作系统版本" width="150" header-align="center" align="center"></el-table-column>
-            <el-table-column prop="systemDate" label="系统安装日期" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="systemDate" label="操作系统安装日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="bmSysDate" label="保密系统安装日期" width="150" :formatter="dateFormater" header-align="center" align="center"></el-table-column>
             <el-table-column prop="ypSerial" label="硬盘序列号" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="networkSate" label="入网情况" width="250" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorName" label="创建者" width="150" header-align="center" align="center"></el-table-column>
             <el-table-column prop="creatorDate" label="创建时间" width="160" :formatter="dateFormat" header-align="center" align="center"></el-table-column>
+            <el-table-column prop="carrierName" label="设备名称" width="160" header-align="center" align="center"></el-table-column>
           </el-table>
         </el-col>
       </el-row>

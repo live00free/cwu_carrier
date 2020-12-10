@@ -2,17 +2,17 @@
   <el-container class="home-container">
     <!-- 头部区域 -->
     <el-header>
-      <div>
-        <img src="../assets/doc.png" alt="">
-        <span class="sys-title">军事科学院涉密载体管理系统</span>
-      </div>
-      <span class="user-title" style="margin-left:40%">欢迎登录,{{loginUserName}}</span>
+      <!-- <div> -->
+      <!-- <img src="../assets/doc.png" alt=""> -->
+      <span class="sys-title">军事科学院涉密载体管理系统</span>
+      <!-- </div> -->
+      <span class="user-title" style="margin-left:50%">欢迎登录,{{loginUserName}}</span>
       <el-button type="info" icon="el-icon-switch-button" @click="logout" circle></el-button>
     </el-header>
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside :width="isCollapse ? '64px' : '200px'">
+      <el-aside :width="isCollapse ? '50px' : '150px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
         <!-- 侧边栏菜单区域 -->
         <el-menu background-color="#2f4052" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
@@ -26,7 +26,7 @@
           <el-menu-item :index="menurouter.carrier" @click="saveNavState(menurouter.carrier)">
             <template slot="title">
               <i class="el-icon-s-goods"></i>
-              <span>载体管理</span>
+              <span>设备管理</span>
             </template>
           </el-menu-item>
           <el-menu-item :index="menurouter.user" @click="saveNavState(menurouter.user)">
@@ -184,6 +184,7 @@ export default {
   color: #ffffff;
   font-family: "宋体";
   font-weight: bold;
+  margin-left: 15px;
 }
 .user-title {
   font-size: 20px;

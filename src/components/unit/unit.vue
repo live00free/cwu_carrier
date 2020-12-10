@@ -36,7 +36,7 @@
         <el-card class="unitusercard">
           <el-row>
             <el-col :offset="10">
-              <span>单位部门人员</span>
+              <span>单位人员</span>
             </el-col>
           </el-row>
           <el-divider></el-divider>
@@ -46,9 +46,9 @@
                 <el-table-column prop="serial" label="序号" min-width="10%" header-align="center" align="center"></el-table-column>
                 <el-table-column prop="fullName" label="姓名" min-width="15%" header-align="center" align="center"></el-table-column>
                 <el-table-column prop="userName" label="账号" min-width="15%" header-align="center" align="center"></el-table-column>
-                <el-table-column prop="secret" label="密级" min-width="15%" header-align="center" align="center"></el-table-column>
+                <el-table-column prop="secret" label="人员分类" min-width="15%" header-align="center" align="center"></el-table-column>
                 <el-table-column prop="unit" label="单位" min-width="20%" header-align="center" align="center"></el-table-column>
-                <el-table-column prop="department" label="部门" min-width="25%" header-align="center" align="center"></el-table-column>
+                <!-- <el-table-column prop="department" label="部门" min-width="25%" header-align="center" align="center"></el-table-column> -->
               </el-table>
             </el-col>
           </el-row>
@@ -63,7 +63,7 @@
     </el-row>
 
     <!-- 添加顶层单位的对话框 -->
-    <el-dialog title="添加单位或部门" :visible.sync="addDialogVisible" width="40%" @close="addDialogClosed" center>
+    <el-dialog title="添加单位" :visible.sync="addDialogVisible" width="40%" @close="addDialogClosed" center>
       <!-- 内容主体区域 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="small">
         <el-card shadow="never">
@@ -74,7 +74,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row :gutter="24">
+          <!-- <el-row :gutter="24">
             <el-col :span="18" :offset="3">
               <el-form-item label="是否单位" prop="isUnit">
                 <el-radio-group v-model="addForm.isUnit">
@@ -83,7 +83,7 @@
                 </el-radio-group>
               </el-form-item>
             </el-col>
-          </el-row>
+          </el-row> -->
         </el-card>
       </el-form>
       <!-- 底部区域 -->
@@ -113,16 +113,13 @@ export default {
       addForm: {
         id: '',
         label: '',
-        isUnit: '',
+        isUnit: true,
         parentId: ''
       },
       limit: { createTopUnit: false, createUnit: false, deleteUnit: false, createUser: false, deleteUser: false, updateUser: false, deleteTopUnit: false },
       addFormRules: {
         label: [
-          { required: true, message: '请输入单位或部门名称', trigger: 'blur' },
-        ],
-        isUnit: [
-          { required: true, message: '请选择是否单位', trigger: 'blur' },
+          { required: true, message: '请输入单位名称', trigger: 'blur' },
         ]
       },
       addDialogVisible: false,
@@ -165,7 +162,7 @@ export default {
         }
 
         if (res.code == 200) {
-          this.$message.success('添加单位部门成功！');
+          this.$message.success('添加单位成功！');
           // 隐藏添加用户的对话框
           this.addDialogVisible = false;
           // 重新获取用户列表数据

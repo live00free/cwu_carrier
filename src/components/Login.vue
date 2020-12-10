@@ -6,7 +6,7 @@
     <el-main>
       <div class="login_box">
         <div class="avatar_box">
-          <img src="../assets/doc.png" alt="">
+          <img src="../assets/logo.png" alt="">
         </div>
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
           <el-form-item prop="username">
@@ -26,11 +26,11 @@
     <!-- 添加用户的对话框 -->
     <el-dialog title="注册用户" :visible.sync="addDialogVisible" width="40%" @close="addDialogClosed" center>
       <!-- 内容主体区域 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="small">
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px" label-position="right" size="mini">
         <el-card shadow="never">
           <el-row :gutter="24">
             <el-col :span="18" :offset="3">
-              <el-form-item label="用户名" prop="fullName">
+              <el-form-item label="姓名" prop="fullName">
                 <el-input v-model="addForm.fullName"></el-input>
               </el-form-item>
             </el-col>
@@ -51,7 +51,7 @@
           </el-row>
           <el-row :gutter="24">
             <el-col :span="18" :offset="3">
-              <el-form-item label="密级" prop="secret">
+              <el-form-item label="人员类别" prop="secret">
                 <el-select v-model="addForm.secret" placeholder="请选择">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
@@ -61,18 +61,11 @@
           <el-row :gutter="24">
             <el-col :span="18" :offset="3">
               <el-form-item label="单位" prop="unit">
-                <el-select v-model="addForm.unit" placeholder="请选择">
-                  <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-select v-model="addForm.unit" placeholder="请选择单位" style="width: 180px" ref="selectReport">
+                  <el-option :value="addForm.unit" :label="addForm.unit" style="width: 180px;height:200px;overflow: auto;background-color:#fff">
+                    <el-tree :data="unitData" @node-click="handleAddNodeClick"></el-tree>
+                  </el-option>
                 </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="24">
-            <el-col :span="18" :offset="3">
-              <el-form-item label="部门" prop="department">
-                <el-input v-model="addForm.department">
-                  <el-button slot="append" icon="el-icon-s-home" @click="openSelectDp"></el-button>
-                </el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -99,22 +92,6 @@
       </span>
     </el-dialog>
 
-    <!-- 选择部门的对话框 -->
-    <el-dialog title="选择部门" :visible.sync="selectDepartmentDV" width="40%" @close="selectDepartmentClosed" center>
-      <!-- 内容主体区域 -->
-      <el-card shadow="never">
-        <el-tree :data="unitData" default-expand-all node-key="id" show-checkbox :check-on-click-node="true" ref="selectTree" :highlight-current="true">
-          <span class="custom-tree-node" slot-scope="{ node}">
-            <span>{{ node.label }}</span>
-          </span>
-        </el-tree>
-      </el-card>
-      <!-- 底部区域 -->
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="selectDPClosed">取 消</el-button>
-        <el-button type="primary" @click="selectDP">确 定</el-button>
-      </span>
-    </el-dialog>
   </el-container>
 </template>
 <script>
@@ -160,11 +137,11 @@ export default {
       // 添加表单的验证规则对象
       addFormRules: {
         fullName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
           {
-            min: 3,
+            min: 2,
             max: 16,
-            message: '用户名的长度在3~16个字符之间',
+            message: '姓名的长度在2~16个字符之间',
             trigger: 'blur'
           }
         ],
@@ -182,13 +159,10 @@ export default {
           { validator: checkPassword, trigger: 'blur' }
         ],
         secret: [
-          { required: true, message: '请选择密级', trigger: 'blur' }
+          { required: true, message: '请选择人员类别', trigger: 'blur' }
         ],
         unit: [
           { required: true, message: '请选择单位', trigger: 'blur' }
-        ],
-        department: [
-          { required: true, message: '请选择部门', trigger: 'blur' }
         ],
         role: [
           { required: true, message: '请选择角色', trigger: 'blur' }
@@ -208,9 +182,7 @@ export default {
         value: '核心涉密人员',
         label: '核心涉密人员'
       }],
-      selectdp: '',
       addDialogVisible: false,
-      selectDepartmentDV: false,
       unitData: [],
       loginFormRules: {
         username: [
@@ -225,9 +197,20 @@ export default {
     }
   },
   created () {
-    this.getUserUnits();
+    this.getUnitList();
   },
   methods: {
+    async getUnitList () {
+      this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
+      const { data: res } = await this.$http.get('carrier/unit/findAll');
+      if (res.code == 200) {
+        this.unitData = JSON.parse(JSON.stringify(res.data))
+      }
+    },
+    handleAddNodeClick (node) {
+      this.addForm.unit = node.label;
+      this.$refs.selectReport.blur();
+    },
     login () {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return;
@@ -244,43 +227,8 @@ export default {
 
       })
     },
-    async getUserUnits () {
-      //   this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
-      const { data: res } = await this.$http.get('carrier/unit/findAllUnits')
-      if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！');
-      }
-      this.unitOptions = res.data;
-    },
     addDialogClosed () {
       this.$refs.addFormRef.resetFields()
-    },
-    openSelectDp () {
-      if (this.addForm.unit == '') {
-        return this.$message.error("请先选择单位！");
-      }
-      this.selectdp = 'add';
-      this.selectDepartmentDV = true;
-      this.getDepartMents();
-    },
-    selectDepartmentClosed () {
-
-    },
-    async getDepartMents () {
-      //   this.$http.defaults.headers.common["Authorization"] = window.sessionStorage.getItem('token');
-      let seunit = '';
-      if (this.selectdp == 'add') {
-        seunit = this.addForm.unit;
-      } else {
-        seunit = this.editForm.unit;
-      }
-      const { data: res } = await this.$http.get('carrier/unit/findAllDepartments?unit=' + seunit);
-      if (res.code == 200) {
-        this.unitData = JSON.parse(JSON.stringify(res.data))
-      }
-    },
-    selectDPClosed () {
-      this.selectDepartmentDV = false;
     },
     // 点击按钮，添加新用户
     addUser () {
@@ -303,25 +251,6 @@ export default {
 
       })
     },
-    selectDP () {
-      let node = this.$refs.selectTree.getCheckedNodes();
-      let departs = [];
-      node.forEach(item => {
-        if (!item.isUnit) {
-          departs.push(item);
-        }
-      });
-      if (node.departs > 1) {
-        return this.$message.warning("不允许选择多个部门");
-      }
-      let depart = departs[0].label;
-      if (this.selectdp == 'add') {
-        this.addForm.department = depart;
-      } else {
-        this.editForm.department = depart;
-      }
-      this.selectDepartmentDV = false;
-    }
   }
 }
 </script>
